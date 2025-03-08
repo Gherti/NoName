@@ -12,28 +12,27 @@ struct ContentView: View {
         ZStack{
             Color(.sRGB, red: 102/255, green: 122/255, blue: 176/255).ignoresSafeArea(.all)
             VStack{
-                    Spacer()
-                    HStack{
-                        Image(systemName: "clock.fill").resizable().frame(width: 37.0, height: 37.0)
-
-                        
-                        Image(systemName: "calendar").resizable().frame(width: 37.0, height: 37.0).padding(.horizontal, 75)
-                        
-                        Image(systemName: "person.fill").resizable().frame(width: 37.0, height: 37.0)
-                    }
-            }
-            VStack{
                 
-                ZStack{
+                ZStack(alignment: .topTrailing){
                     Color(.white)
-                    VStack{
-                        Image(systemName: "clock.fill")
+                    
+                    HStack{
+                        Image(systemName: "clock.fill").resizable().frame(width: 30.0, height: 30.0).padding()
                     }
                     Circle().strokeBorder(Color.black, lineWidth: 40).padding()
 
                 }
-            }.padding(.bottom, 55)
-            
+                
+                HStack{
+                    Spacer()
+                    Image(systemName: "clock.fill").resizable().frame(width: 37.0, height: 37.0)
+                    Spacer()
+                    Image(systemName: "calendar").resizable().frame(width: 37.0, height: 37.0)
+                    Spacer()
+                    Image(systemName: "person.fill").resizable().frame(width: 37.0, height: 37.0)
+                    Spacer()
+                }.padding(.top)
+            }
         }
             
     }
