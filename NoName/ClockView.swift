@@ -31,7 +31,7 @@ struct ClockView: View {
                     ZStack {
                         
                         Circle().fill(.white)
-                        DonutChartView().compositingGroup()
+                        ToDoView()
                         Circle().strokeBorder(lineWidth: 4)
                     }.frame(width: 390, height: 390)
                     ZStack {
