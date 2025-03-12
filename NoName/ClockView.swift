@@ -29,11 +29,15 @@ struct ClockView: View {
                         }
                     }.shadow(radius: 5)
                     ZStack {
-                        Circle().stroke(lineWidth: 5)
+                        
+                        Circle().fill(.white)
+                        DonutChartView().compositingGroup()
+                        Circle().strokeBorder(lineWidth: 4)
                     }.frame(width: 390, height: 390)
                     ZStack {
+                        Circle().fill(Color(.sRGB, red: 142/255, green: 202/255, blue: 230/255))
                         Circle()
-                            .stroke(lineWidth: 8)
+                            .stroke(lineWidth: 5)
                         ForEach(0..<60) { tick in
                             VStack {
                                 Rectangle()
