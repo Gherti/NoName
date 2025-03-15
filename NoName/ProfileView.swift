@@ -9,7 +9,18 @@ import SwiftUI
 
 struct ProfileView: View {
     var body: some View {
-        Color(.sRGB, red: 142/255, green: 202/255, blue: 230/255).ignoresSafeArea(.all)
+        VStack {
+            ZStack {
+                Color(.sRGB, red: 142/255, green: 202/255, blue: 230/255).ignoresSafeArea(.all)
+                VStack{
+                    HStack{
+                        Text("Calendar").padding().font(.system(size: 30, weight: .bold, design: .default))
+                        Spacer()
+                    }
+                    Spacer()
+                }.shadow(radius: 3)
+            }
+        }
     }
 }
 

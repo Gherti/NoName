@@ -19,7 +19,6 @@ struct ContentView: View {
     var body: some View {
         VStack{
             ZStack{
-                
                 switch selectedIndex {
                 case 0:
                     ClockView()

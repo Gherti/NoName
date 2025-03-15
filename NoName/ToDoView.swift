@@ -2,14 +2,24 @@ import SwiftUI
 
 struct DonutChartView: View {
     @State private var selectedSegment: Int? = nil // Tiene traccia del segmento selezionato
-    @State private var pressedIndex: Int? = nil  // Tiene traccia del segmento attualmente premuto
-
+    @State private var pressedIndex: Int? = nil // Tiene traccia del segmento attualmente premuto
+    @Binding var zoomSegment: Bool
     let segments: [(color: Color, value1: Double, value2: Double)] = [
-        (.red, 0, 2),
-        (.blue, 2, 5),
+        (.red, 0, 0.2),
+        (.blue, 0.4, 0.6),
         (.black, 6, 12)
     ]
+    
+    //Funzioni Angoli
+    func startangle(at index: Int) -> Angle {
+        return .degrees(segments[index].value1 * 60 * 0.5 - 90)
+    }
 
+    func endangle(at index: Int) -> Angle {
+        return .degrees(segments[index].value2 * 60 * 0.5 - 90)
+    }
+    
+    //View
     var body: some View {
         ZStack {
             ForEach(0..<segments.count, id: \.self) { index in
@@ -23,6 +33,7 @@ struct DonutChartView: View {
                         DragGesture(minimumDistance: 0)
                             .onChanged { _ in
                                 if pressedIndex != index { // Previene cambiamenti errati
+                                    zoomSegment = true
                                     pressedIndex = index
                                     selectedSegment = index
                                     print("Hai cliccato il segmento di colore \(segments[index].color)")
@@ -36,14 +47,6 @@ struct DonutChartView: View {
         }
         .frame(width: 390, height: 390)
         .overlay(DonutCutout(innerRadius: 160)) // Ritaglia il centro per creare la ciambella
-    }
-
-    func startangle(at index: Int) -> Angle {
-        return .degrees(segments[index].value1 * 60 * 0.5 - 90)
-    }
-
-    func endangle(at index: Int) -> Angle {
-        return .degrees(segments[index].value2 * 60 * 0.5 - 90)
     }
 }
 
@@ -77,14 +80,14 @@ struct DonutCutout: View {
 }
 
 
-/// View _________________
- 
+/// View
 struct ToDoView: View {
+    @Binding var zoomSegment: Bool
     var body: some View {
-        DonutChartView().compositingGroup()
+        DonutChartView(zoomSegment: $zoomSegment).compositingGroup()
     }
 }
 
 #Preview {
-    ToDoView()
+    ToDoView(zoomSegment: .constant(false))
 }

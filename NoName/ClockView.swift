@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct ClockView: View {
+    @State var zoomSegment: Bool = false
+    @State private var isSheetPresented = false
     var body: some View {
             VStack{
                 ZStack(){
@@ -10,8 +12,16 @@ struct ClockView: View {
                         HStack{
                             Text("Clock").padding().font(.system(size: 30, weight: .bold, design: .default))
                             Spacer()
-                            Image(systemName: "plus.circle").resizable().frame(width:
-                                                                                40.0, height: 40.0).padding()
+                            
+                            Button(action:{
+                                isSheetPresented.toggle()
+                            }, label:{
+                                Image(systemName: "plus.circle").font(.system(size: 40))
+                                    .foregroundStyle(.black).padding()
+                            }).sheet(isPresented: $isSheetPresented){
+                                //inserire data e orario
+                            }
+                            
                         }
                         Spacer()
                         HStack {
@@ -20,8 +30,13 @@ struct ClockView: View {
                             
                         }
                     }.shadow(radius: 5)
-                    AnalogClockView()
                     
+                    if zoomSegment == false{ // OROLOGIO
+                        AnalogClockView(zoomSegment: $zoomSegment)
+                    }
+                    else{ // ZOOM
+                        ZoomView()
+                    }
                 }
             }
     }
