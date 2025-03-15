@@ -57,12 +57,10 @@ struct ContentView: View {
                             }
                             Spacer()
                         })
-                        
                     }
                 }
             }
         }
-        
     }
 }
 

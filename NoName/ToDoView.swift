@@ -5,9 +5,9 @@ struct DonutChartView: View {
     @State private var pressedIndex: Int? = nil  // Tiene traccia del segmento attualmente premuto
 
     let segments: [(color: Color, value1: Double, value2: Double)] = [
-        (.red, 0, 0.2),
-        (.blue, 0.2, 0.3),
-        (.black, 0.3, 0.4)
+        (.red, 0, 2),
+        (.blue, 2, 5),
+        (.black, 6, 12)
     ]
 
     var body: some View {
@@ -35,7 +35,7 @@ struct DonutChartView: View {
             }
         }
         .frame(width: 390, height: 390)
-        .overlay(DonutCutout(innerRadius: 162)) // Ritaglia il centro per creare la ciambella
+        .overlay(DonutCutout(innerRadius: 160)) // Ritaglia il centro per creare la ciambella
     }
 
     func startangle(at index: Int) -> Angle {
@@ -76,6 +76,9 @@ struct DonutCutout: View {
     }
 }
 
+
+/// View _________________
+ 
 struct ToDoView: View {
     var body: some View {
         DonutChartView().compositingGroup()
