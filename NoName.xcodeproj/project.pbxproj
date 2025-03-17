@@ -30,7 +30,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		AFD19EA42D7C6E2500E81BDF /* NoName */ = {
+		AF01CACE2D8824B2009F51C4 /* NoName */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = NoName;
 			sourceTree = "<group>";
@@ -75,7 +75,7 @@
 		AFD19E992D7C6E2500E81BDF = {
 			isa = PBXGroup;
 			children = (
-				AFD19EA42D7C6E2500E81BDF /* NoName */,
+				AF01CACE2D8824B2009F51C4 /* NoName */,
 				AFD19EB52D7C6E2700E81BDF /* NoNameTests */,
 				AFD19EBF2D7C6E2700E81BDF /* NoNameUITests */,
 				AFD19EA32D7C6E2500E81BDF /* Products */,
@@ -108,7 +108,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				AFD19EA42D7C6E2500E81BDF /* NoName */,
+				AF01CACE2D8824B2009F51C4 /* NoName */,
 			);
 			name = NoName;
 			packageProductDependencies = (

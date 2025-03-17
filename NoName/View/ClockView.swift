@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ClockView: View {
+    @StateObject private var viewModel = TimeViewModel()
     @State var zoomSegment: Bool = false
     @State private var isSheetPresented = false
     var body: some View {
@@ -19,8 +20,8 @@ struct ClockView: View {
                                 Image(systemName: "plus.circle").font(.system(size: 40))
                                     .foregroundStyle(.black).padding()
                             }).sheet(isPresented: $isSheetPresented){
-                                //inserire data e orario
-                            }
+                                BotttomSheetView()
+                            }.environmentObject(viewModel)
                             
                         }
                         Spacer()
