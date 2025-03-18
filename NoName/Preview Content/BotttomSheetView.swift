@@ -9,12 +9,10 @@ import SwiftUI
 
 struct BotttomSheetView: View {
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var timeViewModel: TimeViewModel
-    @EnvironmentObject private var taskViewModel: TaskViewModel
+    @Environment(\.modelContext) var context
     
-    @State private var username: String = ""
-    @State private var inizio =  Date()
-    @State private var fine =  Date()
+    //Oggetti provenienti da fuori
+    @State private var task = Task()
     
     var body: some View {
         VStack{
@@ -28,29 +26,24 @@ struct BotttomSheetView: View {
                 
                 Spacer()
                 Button(action: {
-                    
-                    timeViewModel.updateTimeStart(from: inizio)
-                    timeViewModel.updateTimeFinish(from: fine)
-                    
-                    //aggiunto ai task
-                    taskViewModel.addTask(color: .red, value1: timeViewModel.getMinuteStart(), value2: timeViewModel.getMinuteFinish())
+                    context.insert(task)
                     dismiss()
                 }){
-                    Text("Add").padding().font(.system(size: 25, weight: .bold, design: .default))}.disabled(inizio >= fine ? true : false)
+                    Text("Add").padding().font(.system(size: 25, weight: .bold, design: .default))}.disabled(task.start >= task.end ? true : false)
                 
             }
             GroupBox{
                 GroupBox {
-                    TextField("Nome", text:$username).foregroundStyle(.black)
+                    TextField("Nome", text:$task.name).foregroundStyle(.black)
                 }
                 GroupBox {
-                    TextField("Luogo", text:$username).foregroundStyle(.black)
+                    TextField("Luogo", text:$task.luogo).foregroundStyle(.black)
                 }
             }.padding()
             GroupBox{
-                DatePicker("Inizio", selection: $inizio, displayedComponents: .hourAndMinute).padding()
+                DatePicker("Inizio", selection: $task.start, displayedComponents: .hourAndMinute).padding()
                 
-                DatePicker("Fine", selection: $fine, displayedComponents: .hourAndMinute).padding()
+                DatePicker("Fine", selection: $task.end, displayedComponents: .hourAndMinute).padding()
             }.padding()
             Spacer()
             
@@ -61,5 +54,6 @@ struct BotttomSheetView: View {
 }
 
 #Preview {
-    BotttomSheetView()
+    BotttomSheetView().modelContainer(for: Task.self)
+        
 }

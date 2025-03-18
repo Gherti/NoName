@@ -1,50 +1,59 @@
 import SwiftUI
+import SwiftData
+
 
 struct ToDoView: View {
-    @State private var selectedSegment: Int? = nil
-    @State private var pressedIndex: Int? = nil
+    @State private var selectedSegment: UUID? = nil
+    @State private var pressedIndex: UUID? = nil
     
     //Oggetti provenienti da fuori
     @Binding var zoomSegment: Bool
-    @EnvironmentObject private var taskViewModel: TaskViewModel
+    @EnvironmentObject var timeModel: TimeModel
     
-    var segments: [(color: Color, value1: Double, value2: Double)] {
-        taskViewModel.clockPresented ? taskViewModel.getAmTasks() : taskViewModel.getPmTasks()
-    }
+    //Database
+    @Query private var tasks: [Task]
     
     //Funzioni Angoli
-    func startangle(at index: Int) -> Angle {
-        return .degrees(segments[index].value1  * 0.5 - 90)
-    }
-
-    func endangle(at index: Int) -> Angle {
-        return .degrees(segments[index].value2 * 0.5 - 90)
+    func angle(at orario: Date ) -> Angle {
+        let calendar = Calendar.current
+        let minute = Double(calendar.component(.minute, from: orario) + calendar.component(.hour, from: orario)*60)
+        return .degrees(minute * 0.5 - 90)
     }
     
+    func isAfterNoon(_ date: Date) -> Bool {
+        let calendar = Calendar.current
+        if timeModel.showClock == true{
+            return calendar.component(.hour, from: date) >= 12
+        }
+        else{
+            return calendar.component(.hour, from: date) < 12
+        }
+    }
     //View
     var body: some View {
         ZStack {
-            ForEach(0..<segments.count, id: \.self) { index in
-                let startAngle = startangle(at: index)
-                let endAngle = endangle(at: index)
-
-                PieSlice(startAngle: startAngle, endAngle: endAngle)
-                    .fill(segments[index].color)
-                    .opacity((pressedIndex == index) ? 0.5 : 1) // Cambia opacità solo per il segmento premuto
-                    .gesture(
-                        DragGesture(minimumDistance: 0)
-                            .onChanged { _ in
-                                if pressedIndex != index { // Previene cambiamenti errati
-                                    zoomSegment = true
-                                    pressedIndex = index
-                                    selectedSegment = index
-                                    print("Hai cliccato il segmento di colore \(segments[index].color)")
+            ForEach(tasks) { task in
+                let startAngle = angle(at: task.start)
+                let endAngle = angle(at: task.end)
+                if isAfterNoon(task.start){
+                    PieSlice(startAngle: startAngle, endAngle: endAngle)
+                        .fill(.red)
+                        .opacity((pressedIndex == task.id) ? 0.5 : 1) // Cambia opacità solo per il segmento premuto
+                        .gesture(
+                            DragGesture(minimumDistance: 0)
+                                .onChanged { _ in
+                                    if pressedIndex != task.id { // Previene cambiamenti errati
+                                        pressedIndex = task.id
+                                        selectedSegment = task.id
+                                        print("Hai cliccato il segmento di colore \(task.id)")
+                                    }
                                 }
-                            }
-                            .onEnded { _ in
-                                pressedIndex = nil // Ripristina l'opacità quando si rilascia il dito
-                            }
-                    )
+                                .onEnded { _ in
+                                    pressedIndex = nil // Ripristina l'opacità quando si rilascia il dito
+                                }
+                        )
+                }
+                
             }
         }
         .frame(width: 390, height: 390)
@@ -83,5 +92,5 @@ struct DonutCutout: View {
 }
 
 #Preview {
-    ToDoView(zoomSegment: .constant(false)).environmentObject(TaskViewModel())
+    ToDoView(zoomSegment: .constant(false)).modelContainer(for: Task.self)
 }

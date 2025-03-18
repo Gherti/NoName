@@ -25,7 +25,7 @@ struct ContentView: View {
                 case 1:
                     CalendarView()
                 default:
-                    ProfileView()
+                    AdminView()
                 }
             }
             Spacer(minLength: 3)

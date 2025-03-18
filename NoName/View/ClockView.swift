@@ -1,11 +1,11 @@
 import SwiftUI
+import SwiftData
 
 struct ClockView: View {
-    @StateObject private var timeViewModel = TimeViewModel()
-    @StateObject private var taskViewModel = TaskViewModel()
-    
+    @StateObject private var timeModel = TimeModel()
     @State var zoomSegment: Bool = false
     @State private var isSheetPresented = false
+    
     var body: some View {
             VStack{
                 ZStack(){
@@ -23,7 +23,7 @@ struct ClockView: View {
                                     .foregroundStyle(.black).padding()
                             }).sheet(isPresented: $isSheetPresented){
                                 BotttomSheetView()
-                            }.environmentObject(timeViewModel).environmentObject(taskViewModel)
+                            }
                             
                         }
                         Spacer()
@@ -31,10 +31,9 @@ struct ClockView: View {
                             Spacer()
                             
                             Button(action:{
-                                taskViewModel.changeClockPresented()
-                                print(taskViewModel.clockPresented)
+                                timeModel.toggleClock()
                             }){
-                                Image(systemName: taskViewModel.clockPresented ? "circle.lefthalf.filled" : "circle.lefthalf.filled.inverse").font(.system(size: 40))
+                                Image(systemName: timeModel.showClock ? "moon.fill" : "sun.max.fill").font(.system(size: 40))
                                         .foregroundStyle(.black).padding().padding(.bottom, 60.0)
                                 
                             }
@@ -42,7 +41,7 @@ struct ClockView: View {
                     }.shadow(radius: 5)
                     
                     if zoomSegment == false{ // OROLOGIO
-                        AnalogClockView(zoomSegment: $zoomSegment).environmentObject(taskViewModel)
+                        AnalogClockView(zoomSegment: $zoomSegment).environmentObject(timeModel)
                     }
                     else{ // ZOOM
                         ZoomView()
