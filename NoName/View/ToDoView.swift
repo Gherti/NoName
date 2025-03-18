@@ -9,7 +9,7 @@ struct ToDoView: View {
     @EnvironmentObject private var taskViewModel: TaskViewModel
     
     var segments: [(color: Color, value1: Double, value2: Double)] {
-        taskViewModel.getAmTasks()
+        taskViewModel.clockPresented ? taskViewModel.getAmTasks() : taskViewModel.getPmTasks()
     }
     
     //Funzioni Angoli

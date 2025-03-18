@@ -10,9 +10,10 @@ import SwiftUI
 class TaskViewModel: ObservableObject {
     @Published var amTasks: [(color: Color, value1: Double, value2: Double)] = []
     @Published var pmTasks: [(color: Color, value1: Double, value2: Double)] = []
+    @Published var clockPresented: Bool = true
     
     func addTask(color: Color, value1: Double, value2: Double) {
-        if value1 > 720{
+        if value2 > 720{
             pmTasks.append((color: color, value1: value1, value2: value2))
         }
         else{
@@ -26,5 +27,9 @@ class TaskViewModel: ObservableObject {
     
     func getPmTasks() -> [(color: Color, value1: Double, value2: Double)] {
         return pmTasks
+    }
+    
+    func changeClockPresented() {
+        clockPresented.toggle()
     }
 }

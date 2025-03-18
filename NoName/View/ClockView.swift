@@ -29,8 +29,15 @@ struct ClockView: View {
                         Spacer()
                         HStack {
                             Spacer()
-                            Image(systemName: "circle.lefthalf.filled.inverse").resizable().frame(width: 40.0, height: 40.0).padding().padding(.bottom, 60.0)
                             
+                            Button(action:{
+                                taskViewModel.changeClockPresented()
+                                print(taskViewModel.clockPresented)
+                            }){
+                                Image(systemName: taskViewModel.clockPresented ? "circle.lefthalf.filled" : "circle.lefthalf.filled.inverse").font(.system(size: 40))
+                                        .foregroundStyle(.black).padding().padding(.bottom, 60.0)
+                                
+                            }
                         }
                     }.shadow(radius: 5)
                     
