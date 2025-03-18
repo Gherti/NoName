@@ -8,25 +8,25 @@
 import SwiftUI
 
 class TimeViewModel: ObservableObject {
-    @Published var minuteStart: Int = 12
-    @Published var minuteFinish: Int = 30
+    @Published var minuteStart: Double = 12
+    @Published var minuteFinish: Double = 30
     
     // Funzione per aggiornare l'ora e i minuti
     func updateTimeStart(from orario: Date){
         let calendar = Calendar.current
-        self.minuteStart = calendar.component(.minute, from: orario) + calendar.component(.hour, from: orario)*60
+        self.minuteStart = Double(calendar.component(.minute, from: orario) + calendar.component(.hour, from: orario)*60)
     }
     
     func updateTimeFinish(from orario: Date){
         let calendar = Calendar.current
-        self.minuteFinish = calendar.component(.minute, from: orario) + calendar.component(.hour, from: orario)*60
+        self.minuteFinish = Double(calendar.component(.minute, from: orario) + calendar.component(.hour, from: orario)*60)
     }
     
-    func getMinuteStart() -> Int{
+    func getMinuteStart() -> Double{
         return self.minuteStart
     }
     
-    func getMinuteFinish() -> Int{
+    func getMinuteFinish() -> Double{
         return self.minuteFinish
     }
     

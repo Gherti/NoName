@@ -1,22 +1,24 @@
 import SwiftUI
 
-struct DonutChartView: View {
-    @State private var selectedSegment: Int? = nil // Tiene traccia del segmento selezionato
-    @State private var pressedIndex: Int? = nil // Tiene traccia del segmento attualmente premuto
+struct ToDoView: View {
+    @State private var selectedSegment: Int? = nil
+    @State private var pressedIndex: Int? = nil
+    
+    //Oggetti provenienti da fuori
     @Binding var zoomSegment: Bool
-    let segments: [(color: Color, value1: Double, value2: Double)] = [
-        (.red, 0, 0.2),
-        (.blue, 0.4, 0.6),
-        (.black, 6, 12)
-    ]
+    @EnvironmentObject private var taskViewModel: TaskViewModel
+    
+    var segments: [(color: Color, value1: Double, value2: Double)] {
+        taskViewModel.getAmTasks()
+    }
     
     //Funzioni Angoli
     func startangle(at index: Int) -> Angle {
-        return .degrees(segments[index].value1 * 60 * 0.5 - 90)
+        return .degrees(segments[index].value1  * 0.5 - 90)
     }
 
     func endangle(at index: Int) -> Angle {
-        return .degrees(segments[index].value2 * 60 * 0.5 - 90)
+        return .degrees(segments[index].value2 * 0.5 - 90)
     }
     
     //View
@@ -46,7 +48,8 @@ struct DonutChartView: View {
             }
         }
         .frame(width: 390, height: 390)
-        .overlay(DonutCutout(innerRadius: 160)) // Ritaglia il centro per creare la ciambella
+        .overlay(DonutCutout(innerRadius: 160))
+        .compositingGroup()// Ritaglia il centro per creare la ciambella
     }
 }
 
@@ -79,15 +82,6 @@ struct DonutCutout: View {
     }
 }
 
-
-/// View
-struct ToDoView: View {
-    @Binding var zoomSegment: Bool
-    var body: some View {
-        DonutChartView(zoomSegment: $zoomSegment).compositingGroup()
-    }
-}
-
 #Preview {
-    ToDoView(zoomSegment: .constant(false))
+    ToDoView(zoomSegment: .constant(false)).environmentObject(TaskViewModel())
 }

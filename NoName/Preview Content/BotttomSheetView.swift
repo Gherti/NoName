@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct BotttomSheetView: View {
-    @EnvironmentObject var viewModel: TimeViewModel
+    @EnvironmentObject var timeViewModel: TimeViewModel
+    @EnvironmentObject private var taskViewModel: TaskViewModel
     @State private var inizio =  Date()
     @State private var fine =  Date()
     
@@ -18,8 +19,13 @@ struct BotttomSheetView: View {
                 Text("Cancel").padding().font(.system(size: 25, weight: .bold, design: .default))
                 Spacer()
                 Button(action: {
-                    viewModel.updateTimeStart(from: inizio)
-                    viewModel.updateTimeFinish(from: fine)
+                    timeViewModel.updateTimeStart(from: inizio)
+                    timeViewModel.updateTimeFinish(from: fine)
+                    
+                    //aggiunto ai task
+                    taskViewModel.addTask(color: .red, value1: timeViewModel.getMinuteStart(), value2: timeViewModel.getMinuteFinish())
+                    
+                    
                 }){
                     Text("Add").padding().font(.system(size: 25, weight: .bold, design: .default))}
                 

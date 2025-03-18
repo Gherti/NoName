@@ -3,12 +3,15 @@ import SwiftUI
 struct AnalogClockView: View {
     @State  var pressedIndex: Int? = nil
     @Binding var zoomSegment: Bool
+    @EnvironmentObject private var taskViewModel: TaskViewModel
+    
+    
     var body: some View {
         
             ZStack {
                 ZStack {
                     Circle().fill(.white)
-                    ToDoView(zoomSegment: $zoomSegment)
+                    ToDoView(zoomSegment: $zoomSegment).environmentObject(taskViewModel)
                     Circle().strokeBorder(lineWidth: 4)
                 }.frame(width: 390, height: 390)
                 
@@ -42,5 +45,5 @@ struct AnalogClockView: View {
 }
 
 #Preview {
-    AnalogClockView(zoomSegment: .constant(false))
+    AnalogClockView(zoomSegment: .constant(false)).environmentObject(TaskViewModel())
 }
