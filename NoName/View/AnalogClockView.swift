@@ -7,12 +7,15 @@ struct AnalogClockView: View {
     
     var body: some View {
         
+        GeometryReader { geometry in
+            let bigCircleFrame = (geometry.size.width * 390)/402
+            let littleCircleFrame = (geometry.size.width * 320)/402
             ZStack {
                 ZStack {
                     Circle().fill(.white)
                     ToDoView(zoomSegment: $zoomSegment).environmentObject(timeModel)
                     Circle().strokeBorder(lineWidth: 4)
-                }.frame(width: 390, height: 390)
+                }.frame(width: bigCircleFrame, height: bigCircleFrame)
                 
                 ZStack {
                     Circle().fill(Color(.sRGB, red: 142/255, green: 202/255, blue: 230/255))
@@ -38,11 +41,12 @@ struct AnalogClockView: View {
                         }
                         .rotationEffect(.degrees(Double(tick)/12 * 360))
                     }.padding(20)
-                }.frame(width: 320, height: 320)
-            }
+                }.frame(width: littleCircleFrame, height: littleCircleFrame)
+            }.position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+        }
     }
 }
 
 #Preview {
-    AnalogClockView(zoomSegment: .constant(false))
+    AnalogClockView(zoomSegment: .constant(false)).environmentObject(TimeModel())
 }

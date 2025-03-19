@@ -31,34 +31,39 @@ struct ToDoView: View {
     }
     //View
     var body: some View {
-        ZStack {
-            ForEach(tasks) { task in
-                let startAngle = angle(at: task.start)
-                let endAngle = angle(at: task.end)
-                if isAfterNoon(task.start){
-                    PieSlice(startAngle: startAngle, endAngle: endAngle)
-                        .fill(.red)
-                        .opacity((pressedIndex == task.id) ? 0.5 : 1) // Cambia opacità solo per il segmento premuto
-                        .gesture(
-                            DragGesture(minimumDistance: 0)
-                                .onChanged { _ in
-                                    if pressedIndex != task.id { // Previene cambiamenti errati
-                                        pressedIndex = task.id
-                                        selectedSegment = task.id
-                                        print("Hai cliccato il segmento di colore \(task.id)")
+        
+        GeometryReader { geometry in
+            let bigCircleFrame = (geometry.size.width * 390)/402
+            ZStack {
+                ForEach(tasks) { task in
+                    let startAngle = angle(at: task.start)
+                    let endAngle = angle(at: task.end)
+                    if isAfterNoon(task.start){
+                        PieSlice(startAngle: startAngle, endAngle: endAngle)
+                            .fill(.red)
+                            .opacity((pressedIndex == task.id) ? 0.5 : 1) // Cambia opacità solo per il segmento premuto
+                            .gesture(
+                                DragGesture(minimumDistance: 0)
+                                    .onChanged { _ in
+                                        if pressedIndex != task.id { // Previene cambiamenti errati
+                                            pressedIndex = task.id
+                                            selectedSegment = task.id
+                                            print("Hai cliccato il segmento di colore \(task.id)")
+                                        }
                                     }
-                                }
-                                .onEnded { _ in
-                                    pressedIndex = nil // Ripristina l'opacità quando si rilascia il dito
-                                }
-                        )
+                                    .onEnded { _ in
+                                        pressedIndex = nil // Ripristina l'opacità quando si rilascia il dito
+                                    }
+                            )
+                    }
+                    
                 }
-                
             }
-        }
-        .frame(width: 390, height: 390)
-        .overlay(DonutCutout(innerRadius: 160))
-        .compositingGroup()// Ritaglia il centro per creare la ciambella
+            .frame(width: bigCircleFrame, height: bigCircleFrame)
+            .overlay(DonutCutout(innerRadius: 160))
+            .compositingGroup()
+            .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+        }// Ritaglia il centro per creare la ciambella
     }
 }
 

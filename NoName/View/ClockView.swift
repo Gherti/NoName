@@ -34,7 +34,7 @@ struct ClockView: View {
                                 timeModel.toggleClock()
                             }){
                                 Image(systemName: timeModel.showClock ? "moon.fill" : "sun.max.fill").font(.system(size: 40))
-                                        .foregroundStyle(.black).padding().padding(.bottom, 60.0)
+                                    .foregroundStyle(.black).padding().padding(.bottom, 60.0)
                                 
                             }
                         }
@@ -48,6 +48,7 @@ struct ClockView: View {
                     }
                 }
             }
+        
     }
 }
 
