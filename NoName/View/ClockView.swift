@@ -7,7 +7,7 @@ struct ClockView: View {
     @State private var isSheetPresented = false
     
     var body: some View {
-            VStack{
+            
                 ZStack(){
                     Color(.sRGB, red: 142/255, green: 202/255, blue: 230/255).ignoresSafeArea(.all)
                     
@@ -19,7 +19,7 @@ struct ClockView: View {
                             Button(action:{
                                 isSheetPresented.toggle()
                             }, label:{
-                                Image(systemName: "plus.circle").font(.system(size: 40))
+                                Image(systemName: "plus.circle").font(.system(size: 35))
                                     .foregroundStyle(.black).padding()
                             }).sheet(isPresented: $isSheetPresented){
                                 BotttomSheetView()
@@ -33,7 +33,7 @@ struct ClockView: View {
                             Button(action:{
                                 timeModel.toggleClock()
                             }){
-                                Image(systemName: timeModel.showClock ? "moon.fill" : "sun.max.fill").font(.system(size: 40))
+                                Image(systemName: timeModel.showClock ? "moon.fill" : "sun.max.fill").font(.system(size: 35))
                                     .foregroundStyle(.black).padding().padding(.bottom, 60.0)
                                 
                             }
@@ -47,8 +47,7 @@ struct ClockView: View {
                         ZoomView()
                     }
                 }
-            }
-        
+            
     }
 }
 

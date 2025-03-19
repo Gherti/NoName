@@ -34,12 +34,13 @@ struct ToDoView: View {
         
         GeometryReader { geometry in
             let bigCircleFrame = (geometry.size.width * 390)/402
+            let littlCircleFrame = (geometry.size.width * 320)/402
             ZStack {
                 ForEach(tasks) { task in
                     let startAngle = angle(at: task.start)
                     let endAngle = angle(at: task.end)
                     if isAfterNoon(task.start){
-                        PieSlice(startAngle: startAngle, endAngle: endAngle)
+                        PieSlice(startAngle: startAngle, endAngle: endAngle, bigCircleFrame: bigCircleFrame, littlCircleFrame: littlCircleFrame)
                             .fill(.red)
                             .opacity((pressedIndex == task.id) ? 0.5 : 1) // Cambia opacità solo per il segmento premuto
                             .gesture(
@@ -60,7 +61,7 @@ struct ToDoView: View {
                 }
             }
             .frame(width: bigCircleFrame, height: bigCircleFrame)
-            .overlay(DonutCutout(innerRadius: 160))
+            .overlay(DonutCutout(innerRadius: bigCircleFrame-littlCircleFrame))
             .compositingGroup()
             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
         }// Ritaglia il centro per creare la ciambella
@@ -71,11 +72,13 @@ struct ToDoView: View {
 struct PieSlice: Shape {
     let startAngle: Angle
     let endAngle: Angle
-
+    let bigCircleFrame: Double
+    let littlCircleFrame: Double
+    
     func path(in rect: CGRect) -> Path {
         var path = Path()
-        let center = CGPoint(x: rect.midX, y: rect.midY)
-        let radius = rect.width / 2
+        let center = CGPoint(x: bigCircleFrame/2, y: bigCircleFrame/2)
+        let radius = (bigCircleFrame / 2) + 2
 
         path.move(to: center)
         path.addArc(center: center, radius: radius,

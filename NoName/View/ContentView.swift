@@ -30,7 +30,7 @@ struct ContentView: View {
             }
             Spacer(minLength: 3)
             ZStack {
-                Color(.sRGB, red: 255/255, green: 183/255, blue: 3/255).ignoresSafeArea(edges: .bottom).frame(height: 70)
+                Color(.sRGB, red: 255/255, green: 183/255, blue: 3/255).ignoresSafeArea()
                 HStack{
                     ForEach(0..<3, id: \.self){number in
                         Button(action: {
@@ -40,25 +40,25 @@ struct ContentView: View {
                             if selectedIndex == number {
                                 if number != 1{
                                     Image(systemName: icons[number]+".fill")
-                                        .font(.system(size: 40))
+                                        .font(.system(size: 35))
                                         .foregroundStyle(.black)
                                 }
                                 else {
                                     Image(systemName: icons[number])
-                                        .font(.system(size: 40))
+                                        .font(.system(size: 35))
                                         .foregroundStyle(.black)
                                 }
                             }
                             else{
                                 Image(systemName: icons[number])
-                                    .font(.system(size: 40))
+                                    .font(.system(size: 35))
                                     .foregroundStyle(.gray)
                             }
                             Spacer()
                         })
                     }
-                }
-            }
+                }.padding(.top, 5)
+            }.frame(height: 55)
         }
     }
 }
