@@ -14,6 +14,14 @@ struct BotttomSheetView: View {
     //Oggetti provenienti da fuori
     @State private var task = Task()
     
+    
+    func timeNow(at orario: Date ) -> Double {
+        let calendar = Calendar.current
+        return Double(calendar.component(.minute, from: orario) + calendar.component(.hour, from: orario)*60)
+    }
+    
+    
+    
     var body: some View {
         VStack{
             HStack{
@@ -29,7 +37,7 @@ struct BotttomSheetView: View {
                     context.insert(task)
                     dismiss()
                 }){
-                    Text("Add").padding().font(.system(size: 25, weight: .bold, design: .default))}.disabled(task.start >= task.end ? true : false)
+                    Text("Add").padding().font(.system(size: 25, weight: .bold, design: .default))}.disabled(timeNow(at: task.start) >= timeNow(at: task.end)  ? true : false)
                 
             }
             GroupBox{

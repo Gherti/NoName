@@ -7,47 +7,45 @@ struct ClockView: View {
     @State private var isSheetPresented = false
     
     var body: some View {
-            
-                ZStack(){
-                    Color(.sRGB, red: 142/255, green: 202/255, blue: 230/255).ignoresSafeArea(.all)
-                    
-                    VStack{
-                        HStack{
-                            Text("Clock").padding().font(.system(size: 30, weight: .bold, design: .default))
-                            Spacer()
-                            
-                            Button(action:{
-                                isSheetPresented.toggle()
-                            }, label:{
-                                Image(systemName: "plus.circle").font(.system(size: 35))
-                                    .foregroundStyle(.black).padding()
-                            }).sheet(isPresented: $isSheetPresented){
-                                BotttomSheetView()
-                            }
-                            
-                        }
+            ZStack(){
+                Color(.sRGB, red: 142/255, green: 202/255, blue: 230/255).ignoresSafeArea(.all)
+                
+                VStack{
+                    HStack{
+                        Text("Clock").padding().font(.system(size: 30, weight: .bold, design: .default))
                         Spacer()
-                        HStack {
-                            Spacer()
-                            
-                            Button(action:{
-                                timeModel.toggleClock()
-                            }){
-                                Image(systemName: timeModel.showClock ? "moon.fill" : "sun.max.fill").font(.system(size: 35))
-                                    .foregroundStyle(.black).padding().padding(.bottom, 60.0)
-                                
-                            }
+                        
+                        Button(action:{
+                            isSheetPresented.toggle()
+                        }, label:{
+                            Image(systemName: "plus.circle").font(.system(size: 35))
+                                .foregroundStyle(.black).padding()
+                        }).sheet(isPresented: $isSheetPresented){
+                            BotttomSheetView()
                         }
-                    }.shadow(radius: 5)
-                    
-                    if zoomSegment == false{ // OROLOGIO
-                        AnalogClockView(zoomSegment: $zoomSegment).environmentObject(timeModel)
+                        
                     }
-                    else{ // ZOOM
-                        ZoomView()
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        
+                        Button(action:{
+                            timeModel.toggleClock()
+                        }){
+                            Image(systemName: timeModel.showClock ? "moon.fill" : "sun.max.fill").font(.system(size: 35))
+                                .foregroundStyle(.black).padding().padding(.bottom, 60.0)
+                            
+                        }
                     }
+                }.shadow(radius: 5)
+                
+                if zoomSegment == false{ // OROLOGIO
+                    AnalogClockView(zoomSegment: $zoomSegment).environmentObject(timeModel)
                 }
-            
+                else{ // ZOOM
+                    ZoomView()
+                }
+            }
     }
 }
 
