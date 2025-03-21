@@ -100,5 +100,5 @@ struct DonutCutout: View {
 }
 
 #Preview {
-    ToDoView(zoomSegment: .constant(false)).modelContainer(for: Task.self)
+    ToDoView(zoomSegment: .constant(false)).modelContainer(for: Task.self).environmentObject(TimeModel())
 }

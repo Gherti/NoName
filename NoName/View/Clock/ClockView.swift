@@ -7,7 +7,7 @@ struct ClockView: View {
     @State private var isSheetPresented = false
     
     var body: some View {
-            ZStack(){
+            ZStack{
                 Color(.sRGB, red: 142/255, green: 202/255, blue: 230/255).ignoresSafeArea(.all)
                 
                 VStack{
