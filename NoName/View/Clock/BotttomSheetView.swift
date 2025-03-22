@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct BotttomSheetView: View {
     @Environment(\.dismiss) var dismiss
@@ -13,31 +14,56 @@ struct BotttomSheetView: View {
     
     //Oggetti provenienti da fuori
     @State private var task = Task()
+    @EnvironmentObject var toDoModel: ToDoModel
     
-    
-    func timeNow(at orario: Date ) -> Double {
+    func timeGreater(startTime: Date , endTime: Date, startDate: Date, endDate: Date) -> Bool {
         let calendar = Calendar.current
-        return Double(calendar.component(.minute, from: orario) + calendar.component(.hour, from: orario)*60)
+        
+        let time = Double(calendar.component(.minute, from: startTime) + calendar.component(.hour, from: startTime)*60) >= Double(calendar.component(.minute, from: endTime) + calendar.component(.hour, from: endTime)*60)
+        
+        if startDate > endDate{
+            return true
+        }
+        else if  startDate == endDate{
+            if time{
+                return true
+            }
+            else{
+                return false
+            }
+        }
+        return false
     }
-    
     
     
     var body: some View {
         VStack{
+            RoundedRectangle(cornerRadius: 4)
+                            .frame(width: 40, height: 5)
+                            .foregroundColor(Color.gray.opacity(0.5))
+                            .padding(.top, 8)
             HStack{
                 
                 Button(action: {
                     dismiss()
                 }){
-                    Text("Cancel").padding().font(.system(size: 25, weight: .bold, design: .default)).foregroundStyle(.black)
+                    Text("Cancel").padding([.leading, .bottom, .trailing])
+                        .font(.system(size: 22, weight: .semibold)).foregroundStyle(.red)
                 }
                 
                 Spacer()
+                
                 Button(action: {
-                    context.insert(task)
-                    dismiss()
+                    if toDoModel.addTaskIfPossible(task, context: context) {
+                                        dismiss()
+                    }
+                    else{
+                        print("Task non aggiunto")
+                    }
+                    
                 }){
-                    Text("Add").padding().font(.system(size: 25, weight: .bold, design: .default))}.disabled(timeNow(at: task.start) >= timeNow(at: task.end)  ? true : false)
+                    Text("Add").padding([.leading, .bottom, .trailing])
+                    .font(.system(size: 22, weight: .semibold))}.disabled(timeGreater(startTime: task.startTime, endTime: task.endTime, startDate: task.startDate, endDate: task.endDate))
                 
             }
             GroupBox{
@@ -49,12 +75,32 @@ struct BotttomSheetView: View {
                 }
             }.padding()
             GroupBox{
-                DatePicker("Inizio", selection: $task.start, displayedComponents: .hourAndMinute).padding()
+                HStack {
+                    Text("Start")
+                        .padding(.leading)
+                    Spacer()
+                    ZStack {
+                        DatePicker("", selection: $task.startDate, displayedComponents: .date)
+                            .padding(.trailing, 80.0)
+                        DatePicker("", selection: $task.startTime, displayedComponents: .hourAndMinute)
+                    }
+                }.padding(10.0)
                 
-                DatePicker("Fine", selection: $task.end, displayedComponents: .hourAndMinute).padding()
-            }.padding()
+                HStack {
+                    Text("End")
+                        .padding(.leading)
+                    Spacer()
+                    ZStack {
+                        DatePicker("", selection: $task.endDate, displayedComponents: .date)
+                            .padding(.trailing, 80.0)
+                        DatePicker("", selection: $task.endTime, displayedComponents: .hourAndMinute)
+                    }
+                }.padding(10.0)
+            }
             Spacer()
             
+        }.onAppear{
+            toDoModel.fetchTasks(context: context)
         }
     }
     
@@ -63,5 +109,7 @@ struct BotttomSheetView: View {
 
 #Preview {
     BotttomSheetView().modelContainer(for: Task.self)
+        .environmentObject(TimeModel())
+        .environmentObject(ToDoModel())
         
 }

@@ -13,7 +13,7 @@ struct AnalogClockView: View {
             ZStack {
                 ZStack {
                     Circle().fill(.white)
-                    ToDoView(zoomSegment: $zoomSegment).environmentObject(timeModel)
+                    ToDoView(zoomSegment: $zoomSegment)
                     Circle().strokeBorder(lineWidth: 4)
                 }.frame(width: bigCircleFrame, height: bigCircleFrame)
                 
@@ -48,5 +48,7 @@ struct AnalogClockView: View {
 }
 
 #Preview {
-    AnalogClockView(zoomSegment: .constant(false)).environmentObject(TimeModel())
+    AnalogClockView(zoomSegment: .constant(false))
+        .environmentObject(TimeModel())
+        .environmentObject(ToDoModel())
 }

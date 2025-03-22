@@ -9,20 +9,20 @@ import SwiftUI
 
 struct FullCalendarView: View {
     @EnvironmentObject var dateModel: DateModel
+    
+    @State private var isSheetPresented = false
+    @State private var currentDay: Int = Calendar.current.component(.day, from: Date()) // mese corrente
     @State private var currentMonth: Int = Calendar.current.component(.month, from: Date()) // mese corrente
     @State private var currentYear: Int = Calendar.current.component(.year, from: Date()) // anno corrente
     
     let columns = Array(repeating: GridItem(.flexible()), count: 7)
-    let daysOfWeek = ["S", "M", "T", "W", "T", "F", "S"]
-    let months = [
-        "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
     var body: some View {
         VStack {
             ScrollViewReader { scrollViewProxy in
                 ScrollView {
                     ForEach(1...12, id: \.self) { month in
                         HStack {
-                            Text(months[month - 1])
+                            Text(dateModel.months[month - 1])
                                 .padding()
                                 .font(.system(size: 30, weight: .light, design: .default))
                             Spacer()
@@ -30,8 +30,8 @@ struct FullCalendarView: View {
                         .id(month) // Imposta l'ID per il mese
 
                         HStack {
-                            ForEach(daysOfWeek.indices, id: \.self) { index in
-                                Text(daysOfWeek[index])
+                            ForEach(dateModel.daysOfWeek.indices, id: \.self) { index in
+                                Text(dateModel.daysOfWeek[index])
                                     .font(.system(size: 20, weight: .light, design: .default))
                                     .padding(8)
                                     .frame(maxWidth: .infinity)
@@ -48,11 +48,14 @@ struct FullCalendarView: View {
                                     } else {
                                         Button(action: {
                                             dateModel.insertDate(year: 2025, month: month, day: day)
+                                            isSheetPresented.toggle()
                                         }) {
                                             Text("\(day)")
                                                 .font(.system(size: 20, weight: .light, design: .default))
                                                 .padding(8)
                                                 .foregroundStyle(.black)
+                                        }.sheet(isPresented: $isSheetPresented){
+                                            BottomDayView().environmentObject(dateModel)
                                         }
                                     }
                                 }
@@ -67,10 +70,8 @@ struct FullCalendarView: View {
                     }
                 }
             }
-            
             Spacer()
         }
-        .shadow(radius: 3)
     }
 }
 

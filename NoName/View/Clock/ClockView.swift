@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct ClockView: View {
-    @StateObject private var timeModel = TimeModel()
+    @EnvironmentObject var timeModel: TimeModel
     @State var zoomSegment: Bool = false
     @State private var isSheetPresented = false
     
@@ -40,7 +40,7 @@ struct ClockView: View {
                 }.shadow(radius: 5)
                 
                 if zoomSegment == false{ // OROLOGIO
-                    AnalogClockView(zoomSegment: $zoomSegment).environmentObject(timeModel)
+                    AnalogClockView(zoomSegment: $zoomSegment)
                 }
                 else{ // ZOOM
                     ZoomView()
@@ -51,4 +51,6 @@ struct ClockView: View {
 
 #Preview {
     ClockView()
+        .environmentObject(TimeModel())
+        .environmentObject(ToDoModel())
 }

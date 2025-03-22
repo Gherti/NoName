@@ -32,7 +32,7 @@ struct AdminView: View {
         } else {
             print("Ecco i task nel database:")
             for task in tasks {
-                print("Task ID: \(task.id), Nome: \(task.name), Luogo: \(task.luogo), Inizio: \(task.start), Fine: \(task.end)")
+                print("Task ID: \(task.id), Nome: \(task.name), Luogo: \(task.luogo), Inizio: \(task.startTime), Fine: \(task.endTime)")
             }
         }
     }

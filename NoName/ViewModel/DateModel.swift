@@ -9,7 +9,8 @@ import Foundation
 
 class DateModel: ObservableObject {
     @Published var selectedDate: (year: Int, month: Int, day: Int)? = nil
-    
+    @Published var daysOfWeek = ["S", "M", "T", "W", "T", "F", "S"]
+    @Published var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
     
     func days(year: Int, month: Int) -> [Int]{
         let calendar = Calendar.current
@@ -32,5 +33,67 @@ class DateModel: ObservableObject {
     
     func insertDate(year: Int, month: Int, day: Int){
         selectedDate = (year: year, month: month, day: day)
+    }
+    
+    func getDate()-> (year: Int, month: Int, day: Int)?{
+        return selectedDate
+    }
+    
+    func getWeekdayName(year: Int, month: Int, day: Int) -> String? {
+        let calendar = Calendar.current
+        let components = DateComponents(year: year, month: month, day: day)
+
+        if let date = calendar.date(from: components) {
+            let formatter = DateFormatter()
+            formatter.locale = Locale(identifier: "en_US") // Lingua inglese
+            formatter.dateFormat = "EEEE" // Nome completo del giorno
+
+            return formatter.string(from: date) // "Monday", "Tuesday"...
+        }
+        
+        return nil
+    }
+    
+    func nextDay() {
+        guard let selectedDate = selectedDate else { return }
+        
+        var newYear = selectedDate.year
+        var newMonth = selectedDate.month
+        var newDay = selectedDate.day + 1
+        
+        let daysInMonth = days(year: newYear, month: newMonth).filter { $0 != 0 }.count
+        
+        if newDay > daysInMonth { // Se supera il numero di giorni nel mese, passa al mese successivo
+            newDay = 1
+            newMonth += 1
+            if newMonth > 12 { // Se supera dicembre, passa all'anno successivo
+                newMonth = 1
+                newYear += 1
+            }
+        }
+        
+        insertDate(year: newYear, month: newMonth, day: newDay)
+    }
+    
+    
+    
+    func previousDay() {
+        guard let selectedDate = selectedDate else { return }
+        
+        var newYear = selectedDate.year
+        var newMonth = selectedDate.month
+        var newDay = selectedDate.day - 1
+        
+        if newDay < 1 { // Se il giorno è minore di 1, passa al mese precedente
+            newMonth -= 1
+            if newMonth < 1 { // Se è minore di gennaio, torna a dicembre dell'anno precedente
+                newMonth = 12
+                newYear -= 1
+            }
+            let daysInPrevMonth = days(year: newYear, month: newMonth).filter { $0 != 0 }.count
+            newDay = daysInPrevMonth
+        }
+        
+        insertDate(year: newYear, month: newMonth, day: newDay)
     }
 }

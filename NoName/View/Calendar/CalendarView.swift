@@ -23,15 +23,9 @@ struct CalendarView: View {
                             BotttomSheetView()
                         }
                     }
-                
-                    if dateModel.selectedDate == nil {
-                        FullCalendarView().environmentObject(dateModel)
-                    }
-                    else{
-                        WeekView().environmentObject(dateModel)
-                    }
-                }
+                    FullCalendarView().environmentObject(dateModel)
                     
+                }
             }
         }
     }
