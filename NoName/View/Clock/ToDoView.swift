@@ -20,12 +20,12 @@ struct ToDoView: View {
         return .degrees(minute * 0.5 - 90)
     }
     
-    func isAfterNoon(_ date: Date) -> Bool {
+    func isAfterNoon(start: Date, end: Date) -> Bool {
         let calendar = Calendar.current
         if timeModel.showClock == true {
-            return calendar.component(.hour, from: date) >= 12
+            return calendar.component(.hour, from: end) >= 12 && calendar.component(.minute, from: end) > 0
         } else {
-            return calendar.component(.hour, from: date) < 12
+            return calendar.component(.hour, from: start) < 12
         }
     }
     
@@ -44,8 +44,7 @@ struct ToDoView: View {
         let start = calendar.startOfDay(for: task.startDate)
         let end = calendar.startOfDay(for: task.endDate)
         
-        
-        
+
         if today > start && today < end {
             return (.degrees(-90), .degrees(270))
         }
@@ -68,14 +67,21 @@ struct ToDoView: View {
     // View
     var body: some View {
         GeometryReader { geometry in
+            let calendar = Calendar.current
             let bigCircleFrame = (geometry.size.width * 390) / 402
             let littlCircleFrame = (geometry.size.width * 320) / 402
             ZStack {
                 ForEach(tasks) { task in
                     // Mostra il task solo se è del giorno corrente
                     if isTaskForToday(task) {
-                        let (startAngle, endAngle) = taskSize(task)
-                        if isAfterNoon(task.startTime) {
+                         var (startAngle, endAngle) = taskSize(task)
+                        if isAfterNoon(start: task.startTime, end: task.endTime) {
+                            if calendar.component(.hour, from: task.startTime) < 12 && timeModel.showClock == true {
+                                var startAngle = Angle.degrees(270)
+                            }
+                            else if calendar.component(.hour, from: task.startTime) < 12 && timeModel.showClock == false && calendar.component(.hour, from: task.endTime) >= 12{
+                                 var endAngle = Angle.degrees(270)
+                            }
                             PieSlice(startAngle: startAngle, endAngle: endAngle, bigCircleFrame: bigCircleFrame, littlCircleFrame: littlCircleFrame)
                                 .fill(.red)
                                 .opacity((pressedIndex == task.id) ? 0.5 : 1)
