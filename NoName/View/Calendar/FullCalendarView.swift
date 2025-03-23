@@ -1,9 +1,3 @@
-//
-//  FullCalendarView.swift
-//  NoName
-//
-//  Created by Nicoló Metani on 21/03/25.
-//
 
 import SwiftUI
 
