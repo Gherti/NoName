@@ -16,11 +16,16 @@ struct BotttomSheetView: View {
     @State private var task = Task()
     @EnvironmentObject var toDoModel: ToDoModel
     
-    func timeGreater(startTime: Date , endTime: Date, startDate: Date, endDate: Date) -> Bool {
+    func setSecondZero(date: Date) -> Date {
         let calendar = Calendar.current
+        var components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date)
+        components.second = 0  // Imposta i secondi a zero senza toccare il resto
+        return calendar.date(from: components) ?? date
+    }
+    
+    func timeGreater(startTime: Date , endTime: Date, startDate: Date, endDate: Date) -> Bool {
         
-        let time = Double(calendar.component(.minute, from: startTime) + calendar.component(.hour, from: startTime)*60) >= Double(calendar.component(.minute, from: endTime) + calendar.component(.hour, from: endTime)*60)
-        
+        let time = setSecondZero(date: startTime) >= setSecondZero(date: endTime)
         if startDate > endDate{
             return true
         }
@@ -54,10 +59,13 @@ struct BotttomSheetView: View {
                 Spacer()
                 
                 Button(action: {
+                    task.startTime = setSecondZero(date: task.startTime)
+                    task.endTime = setSecondZero(date: task.endTime)
                     if toDoModel.addTaskIfPossible(task, context: context) {
                                         dismiss()
                     }
                     else{
+                        //Pop up Errore
                         print("Task non aggiunto")
                     }
                     
@@ -99,12 +107,8 @@ struct BotttomSheetView: View {
             }
             Spacer()
             
-        }.onAppear{
-            toDoModel.fetchTasks(context: context)
         }
     }
-    
-    
 }
 
 #Preview {

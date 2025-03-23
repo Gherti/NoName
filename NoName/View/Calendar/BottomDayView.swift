@@ -67,10 +67,16 @@ struct BottomDayView: View {
             }
             
             Spacer()
+            
+            CatalogueTaskView()
+            
+            ///Show Task
         }
     }
 }
 
 #Preview {
-    BottomDayView().environmentObject(DateModel())
+    BottomDayView()
+        .environmentObject(DateModel())
+        .environmentObject(ToDoModel())
 }

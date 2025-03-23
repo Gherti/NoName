@@ -10,16 +10,16 @@ import SwiftUI
 @main
 struct NoNameApp: App {
     @StateObject private var timeModel = TimeModel()
-    @StateObject private var toDoModel = ToDoModel() // Add this line
+    @StateObject private var toDoModel = ToDoModel()
+    @StateObject private var dateModel = DateModel()// Add this line
     
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(TimeModel())
+                .environmentObject(dateModel)
+                .environmentObject(timeModel)
                 .environmentObject(toDoModel) // Add this line
-                .modelContainer(for: Task.self, inMemory: false, isUndoEnabled: true, onSetup: { container in
-                    // This is where you'd handle migrations if needed
-                    print("SwiftData container setup complete")})
+                .modelContainer(for: Task.self)
         }
     }
 }

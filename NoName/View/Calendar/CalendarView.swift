@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct CalendarView: View {
-    @StateObject private var dateModel = DateModel()
+    @EnvironmentObject var dateModel: DateModel
     @State private var isSheetPresented = false
     
     var body: some View {
@@ -23,7 +23,7 @@ struct CalendarView: View {
                             BotttomSheetView()
                         }
                     }
-                    FullCalendarView().environmentObject(dateModel)
+                    FullCalendarView()
                     
                 }
             }
@@ -33,4 +33,6 @@ struct CalendarView: View {
 
 #Preview {
     CalendarView()
+        .environmentObject(DateModel())
+        .environmentObject(ToDoModel())
 }

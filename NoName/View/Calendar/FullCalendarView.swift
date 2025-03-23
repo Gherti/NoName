@@ -55,7 +55,7 @@ struct FullCalendarView: View {
                                                 .padding(8)
                                                 .foregroundStyle(.black)
                                         }.sheet(isPresented: $isSheetPresented){
-                                            BottomDayView().environmentObject(dateModel)
+                                            BottomDayView()
                                         }
                                     }
                                 }
@@ -76,5 +76,7 @@ struct FullCalendarView: View {
 }
 
 #Preview {
-    FullCalendarView().environmentObject(DateModel())
+    FullCalendarView()
+        .environmentObject(DateModel())
+        .environmentObject(ToDoModel())
 }

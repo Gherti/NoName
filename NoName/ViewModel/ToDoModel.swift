@@ -14,7 +14,29 @@ class ToDoModel: ObservableObject {
                 print("Failed to fetch tasks: \(error)")
             }
         }
+    
+    func getTasks(selectedDate: (year: Int, month: Int, day: Int)?) -> [Task] {
+        guard let selectedDate = selectedDate else { return [] }
+
+        let calendar = Calendar.current
         
+        // Creiamo la data con year, month, day
+        var dateComponents = DateComponents()
+        dateComponents.year = selectedDate.year
+        dateComponents.month = selectedDate.month
+        dateComponents.day = selectedDate.day
+        
+        guard let date = calendar.date(from: dateComponents) else {
+            return [] // Se la data non è valida, restituiamo una lista vuota
+        }
+        
+        // Filtriamo i task con la stessa data
+        return tasks.filter { task in
+            let taskDate = calendar.startOfDay(for: task.startDate)
+            let selectedDay = calendar.startOfDay(for: date)
+            return taskDate == selectedDay
+        }
+    }
     /// Combina la data e l'orario ignorando i secondi (impostandoli a 0)
     private func combine(date: Date, time: Date) -> Date? {
         let calendar = Calendar.current
