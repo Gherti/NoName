@@ -13,21 +13,6 @@ struct ToDoView: View {
     // Database
     @Query private var tasks: [Task]
     
-    // Funzioni Angoli
-    func angle(at orario: Date) -> Angle {
-        let calendar = Calendar.current
-        let minute = Double(calendar.component(.minute, from: orario) + calendar.component(.hour, from: orario) * 60)
-        return .degrees(minute * 0.5 - 90)
-    }
-    
-    func isAfterNoon(start: Date, end: Date) -> Bool {
-        let calendar = Calendar.current
-        if timeModel.showClock == true {
-            return calendar.component(.hour, from: end) >= 12 && calendar.component(.minute, from: end) > 0
-        } else {
-            return calendar.component(.hour, from: start) < 12
-        }
-    }
     
     // Funzione per verificare se il task è del giorno corrente
     func isTaskForToday(_ task: Task) -> Bool {
@@ -43,62 +28,69 @@ struct ToDoView: View {
         let today = calendar.startOfDay(for: Date())
         let start = calendar.startOfDay(for: task.startDate)
         let end = calendar.startOfDay(for: task.endDate)
+        var startAng: Double = 0.0
+        var endAng: Double = 0.0
         
-
         if today > start && today < end {
-            return (.degrees(-90), .degrees(270))
+            startAng = 0.0
+            endAng = 1440.0
         }
         else if today == start && today < end{
-            let startAng = Double(calendar.component(.minute, from: task.startTime) + calendar.component(.hour, from: task.startTime) * 60)
-            return (.degrees(startAng * 0.5 - 90), .degrees(270))
+            startAng = Double(calendar.component(.minute, from: task.startTime) + calendar.component(.hour, from: task.startTime) * 60)
+            endAng = 1440.0
+            
         }
         else if today > start && today == end{
-            let endAng = Double(calendar.component(.minute, from: task.endTime) + calendar.component(.hour, from: task.endTime) * 60)
-            return (.degrees(-90), .degrees(endAng * 0.5 - 90))
+            startAng = 0.0
+            endAng = Double(calendar.component(.minute, from: task.endTime) + calendar.component(.hour, from: task.endTime) * 60)
         }
-        else{
-            let startAng = Double(calendar.component(.minute, from: task.startTime) + calendar.component(.hour, from: task.startTime) * 60)
+        else if today == start && today == end{
+            startAng = Double(calendar.component(.minute, from: task.startTime) + calendar.component(.hour, from: task.startTime) * 60)
             
-            let endAng = Double(calendar.component(.minute, from: task.endTime) + calendar.component(.hour, from: task.endTime) * 60)
-            return (.degrees(startAng * 0.5 - 90), .degrees(endAng * 0.5 - 90))
+            endAng = Double(calendar.component(.minute, from: task.endTime) + calendar.component(.hour, from: task.endTime) * 60)
         }
+        if startAng != 0 || endAng != 0{
+                if startAng >= 720 && endAng > 720 && timeModel.showClock == true{
+                return (.degrees(startAng * 0.5 - 90), .degrees(endAng * 0.5 - 90))
+            }
+            else if startAng < 720 && endAng <= 720 && timeModel.showClock == false{
+                return (.degrees(startAng * 0.5 - 90), .degrees(endAng * 0.5 - 90))
+            }
+            else if startAng < 720 && endAng > 720 && timeModel.showClock == true{
+                return (.degrees(720 * 0.5 - 90), .degrees(endAng * 0.5 - 90))
+            }
+            else if startAng < 720 && endAng > 720 && timeModel.showClock == false{
+                return (.degrees(startAng * 0.5 - 90), .degrees(720 * 0.5 - 90))
+            }
+        }
+        return (.degrees(0), .degrees(0))
     }
     
     // View
     var body: some View {
         GeometryReader { geometry in
-            let calendar = Calendar.current
             let bigCircleFrame = (geometry.size.width * 390) / 402
             let littlCircleFrame = (geometry.size.width * 320) / 402
             ZStack {
                 ForEach(tasks) { task in
-                    // Mostra il task solo se è del giorno corrente
-                    if isTaskForToday(task) {
-                         var (startAngle, endAngle) = taskSize(task)
-                        if isAfterNoon(start: task.startTime, end: task.endTime) {
-                            if calendar.component(.hour, from: task.startTime) < 12 && timeModel.showClock == true {
-                                var startAngle = Angle.degrees(270)
-                            }
-                            else if calendar.component(.hour, from: task.startTime) < 12 && timeModel.showClock == false && calendar.component(.hour, from: task.endTime) >= 12{
-                                 var endAngle = Angle.degrees(270)
-                            }
-                            PieSlice(startAngle: startAngle, endAngle: endAngle, bigCircleFrame: bigCircleFrame, littlCircleFrame: littlCircleFrame)
-                                .fill(.red)
-                                .opacity((pressedIndex == task.id) ? 0.5 : 1)
-                                .gesture(
-                                    DragGesture(minimumDistance: 0)
-                                        .onChanged { _ in
-                                            if pressedIndex != task.id {
-                                                pressedIndex = task.id
-                                                selectedSegment = task.id
-                                                print("Hai cliccato il segmento di colore \(task.id)")
-                                            }
+                    let (startAngle, endAngle) = taskSize(task)
+                    if startAngle != Angle.degrees(0) || endAngle != Angle.degrees(0) {
+                        PieSlice(startAngle: startAngle, endAngle: endAngle, bigCircleFrame: bigCircleFrame, littlCircleFrame: littlCircleFrame)
+                            .fill(.red)
+                            .opacity((pressedIndex == task.id) ? 0.5 : 1)
+                            .gesture(
+                                DragGesture(minimumDistance: 0)
+                                    .onChanged { _ in
+                                        if pressedIndex != task.id {
+                                            pressedIndex = task.id
+                                            selectedSegment = task.id
+                                            print("Hai cliccato il segmento di colore \(task.id)")
                                         }
-                                        .onEnded { _ in
-                                            pressedIndex = nil
-                                        }
-                                )
-                        }
+                                    }
+                                    .onEnded { _ in
+                                        pressedIndex = nil
+                                    }
+                            )
                     }
                 }
             }

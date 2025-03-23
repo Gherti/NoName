@@ -17,7 +17,9 @@ struct NoNameApp: App {
             ContentView()
                 .environmentObject(TimeModel())
                 .environmentObject(toDoModel) // Add this line
-                .modelContainer(for: Task.self)
+                .modelContainer(for: Task.self, inMemory: false, isUndoEnabled: true, onSetup: { container in
+                    // This is where you'd handle migrations if needed
+                    print("SwiftData container setup complete")})
         }
     }
 }
