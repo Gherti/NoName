@@ -9,19 +9,48 @@ struct ToDoView: View {
     // Oggetti provenienti da fuori
     @Binding var zoomSegment: Bool
     @EnvironmentObject var timeModel: TimeModel
+    @EnvironmentObject var toDoModel: ToDoModel
+    
     
     // Database
     @Query private var tasks: [Task]
     //DA AGGIUSTARE E IMPLEMENTARE IL FETCH
     
     
-    // Funzione per verificare se il task è del giorno corrente
-    func isTaskForToday(_ task: Task) -> Bool {
-        let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
-        let start = calendar.startOfDay(for: task.startDate)
-        let end = calendar.startOfDay(for: task.endDate)
-        return today >= start && today <= end
+    
+    // View
+    var body: some View {
+        GeometryReader { geometry in
+            let bigCircleFrame = (geometry.size.width * 390) / 402
+            let littlCircleFrame = (geometry.size.width * 320) / 402
+            ZStack {
+                ForEach(tasks) { task in
+                    let (startAngle, endAngle) = taskSize(task)
+                    if startAngle != Angle.degrees(0) || endAngle != Angle.degrees(0) {
+                        PieSlice(startAngle: startAngle, endAngle: endAngle, bigCircleFrame: bigCircleFrame, littlCircleFrame: littlCircleFrame)
+                            .fill(.red)
+                            .opacity((pressedIndex == task.id) ? 0.5 : 1)
+                            .gesture(
+                                DragGesture(minimumDistance: 0)
+                                    .onChanged { _ in
+                                        if pressedIndex != task.id {
+                                            pressedIndex = task.id
+                                            selectedSegment = task.id
+                                            print("Hai cliccato il segmento di colore \(task.id)")
+                                        }
+                                    }
+                                    .onEnded { _ in
+                                        pressedIndex = nil
+                                    }
+                            )
+                    }
+                }
+            }
+            .frame(width: bigCircleFrame, height: bigCircleFrame)
+            .overlay(DonutCutout(innerRadius: bigCircleFrame - littlCircleFrame))
+            .compositingGroup()
+            .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+        }
     }
     
     func taskSize(_ task: Task) -> (startAng: Angle, endAng: Angle){
@@ -67,40 +96,6 @@ struct ToDoView: View {
         return (.degrees(0), .degrees(0))
     }
     
-    // View
-    var body: some View {
-        GeometryReader { geometry in
-            let bigCircleFrame = (geometry.size.width * 390) / 402
-            let littlCircleFrame = (geometry.size.width * 320) / 402
-            ZStack {
-                ForEach(tasks) { task in
-                    let (startAngle, endAngle) = taskSize(task)
-                    if startAngle != Angle.degrees(0) || endAngle != Angle.degrees(0) {
-                        PieSlice(startAngle: startAngle, endAngle: endAngle, bigCircleFrame: bigCircleFrame, littlCircleFrame: littlCircleFrame)
-                            .fill(.red)
-                            .opacity((pressedIndex == task.id) ? 0.5 : 1)
-                            .gesture(
-                                DragGesture(minimumDistance: 0)
-                                    .onChanged { _ in
-                                        if pressedIndex != task.id {
-                                            pressedIndex = task.id
-                                            selectedSegment = task.id
-                                            print("Hai cliccato il segmento di colore \(task.id)")
-                                        }
-                                    }
-                                    .onEnded { _ in
-                                        pressedIndex = nil
-                                    }
-                            )
-                    }
-                }
-            }
-            .frame(width: bigCircleFrame, height: bigCircleFrame)
-            .overlay(DonutCutout(innerRadius: bigCircleFrame - littlCircleFrame))
-            .compositingGroup()
-            .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
-        }
-    }
 }
 
 

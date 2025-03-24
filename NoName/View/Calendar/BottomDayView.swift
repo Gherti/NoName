@@ -7,9 +7,9 @@ struct BottomDayView: View {
     var body: some View {
         VStack {
             RoundedRectangle(cornerRadius: 4)
-                            .frame(width: 40, height: 5)
-                            .foregroundColor(Color.gray.opacity(0.5))
-                            .padding(.top, 8)
+                .frame(width: 40, height: 5)
+                .foregroundColor(Color.gray.opacity(0.5))
+                .padding(.top, 8)
             HStack {
                 Button(action: {
                     withAnimation(.spring()) {

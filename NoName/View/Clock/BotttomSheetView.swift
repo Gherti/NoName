@@ -15,31 +15,7 @@ struct BotttomSheetView: View {
     //Oggetti provenienti da fuori
     @State private var task = Task()
     @EnvironmentObject var toDoModel: ToDoModel
-    
-    func setSecondZero(date: Date) -> Date {
-        let calendar = Calendar.current
-        var components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date)
-        components.second = 0  // Imposta i secondi a zero senza toccare il resto
-        return calendar.date(from: components) ?? date
-    }
-    
-    func timeGreater(startTime: Date , endTime: Date, startDate: Date, endDate: Date) -> Bool {
-        
-        let time = setSecondZero(date: startTime) >= setSecondZero(date: endTime)
-        if startDate > endDate{
-            return true
-        }
-        else if  startDate == endDate{
-            if time{
-                return true
-            }
-            else{
-                return false
-            }
-        }
-        return false
-    }
-    
+    @EnvironmentObject var timeModel: TimeModel
     
     var body: some View {
         VStack{
@@ -59,8 +35,8 @@ struct BotttomSheetView: View {
                 Spacer()
                 
                 Button(action: {
-                    task.startTime = setSecondZero(date: task.startTime)
-                    task.endTime = setSecondZero(date: task.endTime)
+                    task.startTime = timeModel.setSecondZero(date: task.startTime)
+                    task.endTime = timeModel.setSecondZero(date: task.endTime)
                     if toDoModel.addTaskIfPossible(task, context: context) {
                                         dismiss()
                     }
@@ -71,7 +47,7 @@ struct BotttomSheetView: View {
                     
                 }){
                     Text("Add").padding([.leading, .bottom, .trailing])
-                    .font(.system(size: 22, weight: .semibold))}.disabled(timeGreater(startTime: task.startTime, endTime: task.endTime, startDate: task.startDate, endDate: task.endDate))
+                    .font(.system(size: 22, weight: .semibold))}.disabled(timeModel.timeGreater(startTime: task.startTime, endTime: task.endTime, startDate: task.startDate, endDate: task.endDate))
                 
             }
             GroupBox{
@@ -117,7 +93,5 @@ struct BotttomSheetView: View {
         .environmentObject(DateModel())
         .environmentObject(TimeModel())
         .environmentObject(ToDoModel())
-        
-    
         
 }

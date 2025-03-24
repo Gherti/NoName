@@ -12,6 +12,7 @@ class DateModel: ObservableObject {
     @Published var daysOfWeek = ["S", "M", "T", "W", "T", "F", "S"]
     @Published var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
     
+    //CALENDAR VIEW
     func days(year: Int, month: Int) -> [Int]{
         let calendar = Calendar.current
         
@@ -39,6 +40,7 @@ class DateModel: ObservableObject {
         return selectedDate
     }
     
+    //FullCalendarVIew e BottomDayView
     func getWeekdayName(year: Int, month: Int, day: Int) -> String? {
         let calendar = Calendar.current
         let components = DateComponents(year: year, month: month, day: day)
@@ -54,6 +56,8 @@ class DateModel: ObservableObject {
         return nil
     }
     
+    
+    //BottomDayView
     func nextDay() {
         guard let selectedDate = selectedDate else { return }
         
@@ -96,4 +100,19 @@ class DateModel: ObservableObject {
         
         insertDate(year: newYear, month: newMonth, day: newDay)
     }
+    
+    //CatalogueTaskView
+    
+    func formatTime(from date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm" // Cambia formato se necessario
+        return dateFormatter.string(from: date)
+    }
+    
+    func getSizeDate(start: Date, end: Date) -> Double {
+        let calendar = Calendar.current
+        let diff = Double(calendar.component(.minute, from: end) + calendar.component(.hour, from: end) * 60) - Double(calendar.component(.minute, from: start) + calendar.component(.hour, from: start) * 60)
+        return diff
+    }
+    
 }
