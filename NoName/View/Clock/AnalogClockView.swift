@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct AnalogClockView: View {
-    @State  var pressedIndex: Int? = nil
+    
     @Binding var zoomSegment: Bool
     @EnvironmentObject var timeModel: TimeModel
     
@@ -49,6 +49,7 @@ struct AnalogClockView: View {
 
 #Preview {
     AnalogClockView(zoomSegment: .constant(false))
+        .environmentObject(DateModel())
         .environmentObject(TimeModel())
-        .environmentObject(ToDoModel())
+        .environmentObject(ToDoModel()) 
 }

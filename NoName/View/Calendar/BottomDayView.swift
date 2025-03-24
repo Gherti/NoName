@@ -78,5 +78,6 @@ struct BottomDayView: View {
 #Preview {
     BottomDayView()
         .environmentObject(DateModel())
-        .environmentObject(ToDoModel())
+        .environmentObject(TimeModel())
+        .environmentObject(ToDoModel()) 
 }

@@ -34,5 +34,6 @@ struct CalendarView: View {
 #Preview {
     CalendarView()
         .environmentObject(DateModel())
-        .environmentObject(ToDoModel())
+        .environmentObject(TimeModel())
+        .environmentObject(ToDoModel()) 
 }

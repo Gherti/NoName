@@ -53,5 +53,6 @@ struct CatalogueTaskView: View {
 #Preview {
     CatalogueTaskView()
         .environmentObject(DateModel())
-        .environmentObject(ToDoModel())
+        .environmentObject(TimeModel())
+        .environmentObject(ToDoModel()) 
 }

@@ -72,5 +72,6 @@ struct FullCalendarView: View {
 #Preview {
     FullCalendarView()
         .environmentObject(DateModel())
-        .environmentObject(ToDoModel())
+        .environmentObject(TimeModel())
+        .environmentObject(ToDoModel()) 
 }

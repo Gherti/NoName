@@ -12,6 +12,7 @@ struct ToDoView: View {
     
     // Database
     @Query private var tasks: [Task]
+    //DA AGGIUSTARE E IMPLEMENTARE IL FETCH
     
     
     // Funzione per verificare se il task è del giorno corrente
@@ -136,7 +137,8 @@ struct DonutCutout: View {
 
 #Preview {
     ToDoView(zoomSegment: .constant(false))
-        .modelContainer(for: Task.self)
+        //.modelContainer(for: Task.self)
+        .environmentObject(DateModel())
         .environmentObject(TimeModel())
-        .environmentObject(ToDoModel())
+        .environmentObject(ToDoModel()) 
 }

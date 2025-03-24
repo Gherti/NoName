@@ -112,8 +112,12 @@ struct BotttomSheetView: View {
 }
 
 #Preview {
-    BotttomSheetView().modelContainer(for: Task.self)
+    BotttomSheetView()
+        //.modelContainer(for: Task.self)
+        .environmentObject(DateModel())
         .environmentObject(TimeModel())
         .environmentObject(ToDoModel())
+        
+    
         
 }

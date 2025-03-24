@@ -3,6 +3,7 @@ import SwiftData
 
 struct ClockView: View {
     @EnvironmentObject var timeModel: TimeModel
+    
     @State var zoomSegment: Bool = false
     @State private var isSheetPresented = false
     
@@ -51,6 +52,7 @@ struct ClockView: View {
 
 #Preview {
     ClockView()
+        .environmentObject(DateModel())
         .environmentObject(TimeModel())
-        .environmentObject(ToDoModel())
+        .environmentObject(ToDoModel()) 
 }
