@@ -38,6 +38,8 @@ struct BottomDayView: View {
                 
                 Text("\(nameOfDay), \(selectedDate.day) \(dateModel.months[selectedDate.month-1]) \(String(selectedDate.year))")
                     .font(.subheadline)
+                    .foregroundColor(.gray)
+                    .fontWeight(.bold)
                     .padding()
                     .offset(x: dragOffset) // Applica lo spostamento per l'animazione
                     .gesture(
@@ -71,7 +73,7 @@ struct BottomDayView: View {
             CatalogueTaskView()
             
             ///Show Task
-        }
+        }.background(Color.black)
     }
 }
 

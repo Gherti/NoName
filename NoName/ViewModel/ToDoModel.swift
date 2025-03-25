@@ -93,6 +93,4 @@ class ToDoModel: ObservableObject {
                 return false
             }
         }
-    
-    
 }
