@@ -6,8 +6,6 @@ struct CatalogueTaskView: View {
     @EnvironmentObject var dateModel: DateModel
     @Environment(\.modelContext) var context
     
-    
-    @State private var showPopup = false
     var tasksForSelectedDate: [Task] {
         taskModel.getTasks(selectedDate: dateModel.selectedDate)
             .sorted { $0.startDateTime < $1.startDateTime }
@@ -22,7 +20,8 @@ struct CatalogueTaskView: View {
                     ZStack {
                         
                         Button(action: {
-                            showPopup = true
+                            dateModel.viewTaskInfo = true
+                            dateModel.task = task
                         }){
                             RoundedRectangle(cornerRadius: 5)
                                 .frame(width: 280, height: height)

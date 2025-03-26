@@ -70,7 +70,25 @@ struct BottomDayView: View {
             
             Spacer()
             
-            CatalogueTaskView()
+            CatalogueTaskView().overlay{
+                if dateModel.viewTaskInfo{
+                    ZStack{
+                        Color.black.opacity(0.5)
+                            .ignoresSafeArea()
+                            .onTapGesture {
+                                dateModel.viewTaskInfo = false
+                            }
+                        
+                        RoundedRectangle(cornerRadius: 20)
+                            .frame(width:300, height: 450)
+                            .foregroundColor(Color.gray)
+                            .offset(y: -50)
+                        TaskInfoView()
+                            .frame(width:300, height: 450)
+                            .offset(y: -50)
+                    }
+                }
+            }
             
             ///Show Task
         }.background(Color.black)

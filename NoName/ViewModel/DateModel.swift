@@ -6,11 +6,15 @@
 //
 
 import Foundation
+import SwiftUI
+import SwiftData
 
 class DateModel: ObservableObject {
     @Published var selectedDate: (year: Int, month: Int, day: Int)? = nil
     @Published var daysOfWeek = ["S", "M", "T", "W", "T", "F", "S"]
     @Published var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    @Published var viewTaskInfo: Bool = false
+    @Published var task: Task? = nil
     
     //CALENDAR VIEW
     func days(year: Int, month: Int) -> [Int]{

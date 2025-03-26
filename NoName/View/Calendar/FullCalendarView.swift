@@ -41,9 +41,9 @@ struct FullCalendarView: View {
                                         Text("")
                                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                                     } else {
-                                        if currentDay == day && currentMonth == month{
+                                        /*if currentDay == day && currentMonth == month{
                                             Circle()
-                                        }
+                                        }*/
                                         Button(action: {
                                             dateModel.insertDate(year: 2025, month: month, day: day)
                                             isSheetPresented.toggle()
