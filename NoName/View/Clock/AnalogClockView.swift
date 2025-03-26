@@ -51,5 +51,5 @@ struct AnalogClockView: View {
     AnalogClockView(zoomSegment: .constant(false))
         .environmentObject(DateModel())
         .environmentObject(TimeModel())
-        .environmentObject(ToDoModel()) 
+        .environmentObject(TaskModel()) 
 }

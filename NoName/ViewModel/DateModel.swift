@@ -79,8 +79,6 @@ class DateModel: ObservableObject {
         insertDate(year: newYear, month: newMonth, day: newDay)
     }
     
-    
-    
     func previousDay() {
         guard let selectedDate = selectedDate else { return }
         
@@ -109,10 +107,9 @@ class DateModel: ObservableObject {
         return dateFormatter.string(from: date)
     }
     
-    func getSizeDate(start: Date, end: Date) -> Double {
+    func dateHeight(start: Date, end: Date) -> Double {
         let calendar = Calendar.current
-        let diff = Double(calendar.component(.minute, from: end) + calendar.component(.hour, from: end) * 60) - Double(calendar.component(.minute, from: start) + calendar.component(.hour, from: start) * 60)
-        return diff
+        return Double(calendar.component(.minute, from: end) + calendar.component(.hour, from: end) * 60) - Double(calendar.component(.minute, from: start) + calendar.component(.hour, from: start) * 60)
     }
     
 }

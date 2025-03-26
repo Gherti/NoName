@@ -1,85 +1,85 @@
-
 import SwiftUI
 
 struct CatalogueTaskView: View {
     
-    @EnvironmentObject var toDoModel: ToDoModel
+    @EnvironmentObject var taskModel: TaskModel
     @EnvironmentObject var dateModel: DateModel
-    
     @Environment(\.modelContext) var context
     
+    
+    @State private var showPopup = false
     var tasksForSelectedDate: [Task] {
-        toDoModel.getTasks(selectedDate: dateModel.selectedDate)
-            .sorted { $0.startTime < $1.startTime }
+        taskModel.getTasks(selectedDate: dateModel.selectedDate)
+            .sorted { $0.startDateTime < $1.startDateTime }
     }
     
     var body: some View {
         ScrollView {
-            VStack{
+            VStack {
                 ForEach(tasksForSelectedDate, id: \.id) { task in
-                    let height = dateModel.getSizeDate(start: task.startTime, end: task.endTime)
+                    let height = dateModel.dateHeight(start: task.startDateTime, end: task.endDateTime)
+                    
                     ZStack {
-                        RoundedRectangle(cornerRadius: 5)
-                            .frame(width: 280, height: height).padding()
-                            .foregroundColor(Color.red)
                         
+                        Button(action: {
+                            showPopup = true
+                        }){
+                            RoundedRectangle(cornerRadius: 5)
+                                .frame(width: 280, height: height)
+                                .padding()
+                                .foregroundColor(Color.red)
+                                .overlay(
+                                    VStack(alignment: .leading, spacing: 5) {
+                                        if height >= 10 {
+                                            Text("\(task.name)")
+                                                .foregroundColor(.white.opacity(0.8))
+                                                .font(.system(size: min(height * 0.8, 24)))
+                                                .lineLimit(1)
+                                        }
+                                        if height >= 55 {
+                                            Text("\(task.location)") // Corretto il nome della variabile
+                                                .foregroundColor(.white.opacity(0.8))
+                                                .font(.system(size: 16))
+                                                .lineLimit(1)
+                                        }
+                                    }
+                                        .padding(.leading, 20)
+                                        .padding(.top, 15),
+                                    alignment: .topLeading
+                                )
+                        }
+                    
+                        // Linee e orari
                         RoundedRectangle(cornerRadius: 7)
-                            .frame(width: 350 ,height: 1) // Spessore della linea
-                            .foregroundColor(.gray.opacity(0.5)) // Colore della linea
-                            .offset(x: 0, y: -height/2)
-                        Text(dateModel.formatTime(from: task.startTime))
-                            .offset(x: -157, y: -(height/2 + 10))
-                            .foregroundColor(.gray.opacity(0.5))
+                            .frame(width: 350, height: 1)
+                            .foregroundColor(.gray.opacity(0.7))
+                            .offset(x: 0, y: -height / 2)
+                        Text(dateModel.formatTime(from: task.startDateTime))
+                            .offset(x: -157, y: -(height / 2 + 10))
+                            .foregroundColor(.gray.opacity(0.7))
                             .fontWeight(.bold)
                         
                         RoundedRectangle(cornerRadius: 7)
-                            .frame(width: 350 ,height: 1) // Spessore della linea
-                            .foregroundColor(.gray.opacity(0.5)) // Colore della linea
-                            .offset(x: 0, y: height/2)
-                        Text(dateModel.formatTime(from: task.endTime))
-                            .offset(x: 157, y: height/2 + 10)
-                            .foregroundColor(.gray.opacity(0.5))
+                            .frame(width: 350, height: 1)
+                            .foregroundColor(.gray.opacity(0.7))
+                            .offset(x: 0, y: height / 2)
+                        Text(dateModel.formatTime(from: task.endDateTime))
+                            .offset(x: 157, y: height / 2 + 10)
+                            .foregroundColor(.gray.opacity(0.7))
                             .fontWeight(.bold)
+                        
                     }
                 }
                 Spacer()
-            }.frame(maxWidth: .infinity)
-            .onAppear {
-                        toDoModel.fetchTasks(context: context)
             }
-            /*VStack{
-            ForEach(1...3, id: \.self) { task in
-                
-                ZStack {
-                    RoundedRectangle(cornerRadius: 5)
-                        .frame(width: 280, height: 100).padding()
-                        .foregroundColor(Color.red)
-                    
-                    RoundedRectangle(cornerRadius: 7)
-                        .frame(width: 350 ,height: 1) // Spessore della linea
-                        .foregroundColor(.gray.opacity(0.5)) // Colore della linea
-                        .offset(x: 0, y: -50)
-                    Text("9:00")
-                        .foregroundStyle(.gray.opacity(0.5))
-                        .offset(x: -156, y: -60)
-                        .fontWeight(.bold)
-                    
-                    RoundedRectangle(cornerRadius: 7)
-                        .frame(width: 350 ,height: 1)  // Spessore della linea
-                        .foregroundColor(.gray.opacity(0.5)) // Colore della linea
-                        .offset(x: 0, y: 50)
-                    Text("10:00")
-                        .foregroundStyle(.gray.opacity(0.5))
-                        .offset(x: 157, y: 60)
-                        .fontWeight(.bold)
-                        
-                }
-            }
-            Spacer()
-        }*/
-        }.frame(maxWidth: .infinity)
-            .scrollIndicators(.hidden)
-            .background(Color.black)
+            .frame(maxWidth: .infinity)
+            /*.onAppear {
+                taskModel.fetchTasks(context: context)
+            }*/
+        }
+        .frame(maxWidth: .infinity)
+        .scrollIndicators(.hidden)
+        .background(Color.black)
     }
 }
 
@@ -87,5 +87,5 @@ struct CatalogueTaskView: View {
     CatalogueTaskView()
         .environmentObject(DateModel())
         .environmentObject(TimeModel())
-        .environmentObject(ToDoModel()) 
+        .environmentObject(TaskModel())
 }

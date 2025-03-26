@@ -17,7 +17,9 @@ struct ClockView: View {
                         Spacer()
                         
                         Button(action:{
-                            isSheetPresented.toggle()
+                            if !isSheetPresented {
+                                isSheetPresented = true
+                            }
                         }, label:{
                             Image(systemName: "plus.circle").font(.system(size: 35))
                                 .foregroundStyle(.black).padding()
@@ -54,5 +56,5 @@ struct ClockView: View {
     ClockView()
         .environmentObject(DateModel())
         .environmentObject(TimeModel())
-        .environmentObject(ToDoModel()) 
+        .environmentObject(TaskModel()) 
 }

@@ -10,15 +10,15 @@ import SwiftUI
 @main
 struct NoNameApp: App {
     @StateObject private var timeModel = TimeModel()
-    @StateObject private var toDoModel = ToDoModel()
-    @StateObject private var dateModel = DateModel()// Add this line
+    @StateObject private var dateModel = DateModel()
+    @StateObject private var taskModel = TaskModel()// Add this line
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(dateModel)
                 .environmentObject(timeModel)
-                .environmentObject(toDoModel) // Add this line
+                .environmentObject(taskModel)// Add this line
                 .modelContainer(for: Task.self)
         }
     }

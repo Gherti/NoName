@@ -9,13 +9,12 @@ struct ToDoView: View {
     // Oggetti provenienti da fuori
     @Binding var zoomSegment: Bool
     @EnvironmentObject var timeModel: TimeModel
-    @EnvironmentObject var toDoModel: ToDoModel
-    
+    @EnvironmentObject var taskModel: TaskModel
+    @Environment(\.modelContext) var context
     
     // Database
-    @Query private var tasks: [Task]
+    //@Query private var tasks: [Task]
     //DA AGGIUSTARE E IMPLEMENTARE IL FETCH
-    
     
     
     // View
@@ -24,8 +23,8 @@ struct ToDoView: View {
             let bigCircleFrame = (geometry.size.width * 390) / 402
             let littlCircleFrame = (geometry.size.width * 320) / 402
             ZStack {
-                ForEach(tasks) { task in
-                    let (startAngle, endAngle) = taskSize(task)
+                ForEach(taskModel.tasks) { task in
+                    let (startAngle, endAngle) = timeModel.taskSize(task)
                     if startAngle != Angle.degrees(0) || endAngle != Angle.degrees(0) {
                         PieSlice(startAngle: startAngle, endAngle: endAngle, bigCircleFrame: bigCircleFrame, littlCircleFrame: littlCircleFrame)
                             .fill(.red)
@@ -51,51 +50,10 @@ struct ToDoView: View {
             .compositingGroup()
             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
         }
+        .onAppear {
+            taskModel.fetchTasks(context: context)
+        }
     }
-    
-    func taskSize(_ task: Task) -> (startAng: Angle, endAng: Angle){
-        let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
-        let start = calendar.startOfDay(for: task.startDate)
-        let end = calendar.startOfDay(for: task.endDate)
-        var startAng: Double = 0.0
-        var endAng: Double = 0.0
-        
-        if today > start && today < end {
-            startAng = 0.0
-            endAng = 1440.0
-        }
-        else if today == start && today < end{
-            startAng = Double(calendar.component(.minute, from: task.startTime) + calendar.component(.hour, from: task.startTime) * 60)
-            endAng = 1440.0
-            
-        }
-        else if today > start && today == end{
-            startAng = 0.0
-            endAng = Double(calendar.component(.minute, from: task.endTime) + calendar.component(.hour, from: task.endTime) * 60)
-        }
-        else if today == start && today == end{
-            startAng = Double(calendar.component(.minute, from: task.startTime) + calendar.component(.hour, from: task.startTime) * 60)
-            
-            endAng = Double(calendar.component(.minute, from: task.endTime) + calendar.component(.hour, from: task.endTime) * 60)
-        }
-        if startAng != 0 || endAng != 0{
-                if startAng >= 720 && endAng > 720 && timeModel.showClock == true{
-                return (.degrees(startAng * 0.5 - 90), .degrees(endAng * 0.5 - 90))
-            }
-            else if startAng < 720 && endAng <= 720 && timeModel.showClock == false{
-                return (.degrees(startAng * 0.5 - 90), .degrees(endAng * 0.5 - 90))
-            }
-            else if startAng < 720 && endAng > 720 && timeModel.showClock == true{
-                return (.degrees(720 * 0.5 - 90), .degrees(endAng * 0.5 - 90))
-            }
-            else if startAng < 720 && endAng > 720 && timeModel.showClock == false{
-                return (.degrees(startAng * 0.5 - 90), .degrees(720 * 0.5 - 90))
-            }
-        }
-        return (.degrees(0), .degrees(0))
-    }
-    
 }
 
 
@@ -135,5 +93,5 @@ struct DonutCutout: View {
         //.modelContainer(for: Task.self)
         .environmentObject(DateModel())
         .environmentObject(TimeModel())
-        .environmentObject(ToDoModel()) 
+        .environmentObject(TaskModel())
 }

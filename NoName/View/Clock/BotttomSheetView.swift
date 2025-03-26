@@ -1,97 +1,76 @@
-//
-//  BotttomSheetView.swift
-//  NoName
-//
-//  Created by Nicoló Metani on 17/03/25.
-//
-
 import SwiftUI
 import SwiftData
 
 struct BotttomSheetView: View {
     @Environment(\.dismiss) var dismiss
-    @Environment(\.modelContext) var context
+    @Environment(\.modelContext) var modelContext
     
-    //Oggetti provenienti da fuori
+    
     @State private var task = Task()
-    @EnvironmentObject var toDoModel: ToDoModel
+    
+    @EnvironmentObject var taskModel: TaskModel
     @EnvironmentObject var timeModel: TimeModel
+    
+    @State private var endtime: Date = Date()
+    @State private var starttime: Date = Date()
     
     var body: some View {
         VStack{
             RoundedRectangle(cornerRadius: 4)
-                            .frame(width: 40, height: 5)
-                            .foregroundColor(Color.gray.opacity(0.5))
-                            .padding(.top, 8)
+                .frame(width: 40, height: 5)
+                .foregroundColor(Color.gray.opacity(0.5))
+                .padding(.top, 8)
+            
             HStack{
-                
                 Button(action: {
                     dismiss()
                 }){
-                    Text("Cancel").padding([.leading, .bottom, .trailing])
-                        .font(.system(size: 22, weight: .semibold)).foregroundStyle(.red)
+                    Text("Cancel")
+                        .padding([.leading, .bottom, .trailing])
+                        .font(.system(size: 22, weight: .semibold))
+                        .foregroundStyle(.red)
                 }
                 
                 Spacer()
                 
                 Button(action: {
-                    task.startTime = timeModel.setSecondZero(date: task.startTime)
-                    task.endTime = timeModel.setSecondZero(date: task.endTime)
-                    if toDoModel.addTaskIfPossible(task, context: context) {
-                                        dismiss()
+                    // Reset the task state before adding
+                    task.startDateTime = starttime
+                    task.endDateTime = endtime
+                    if !taskModel.checkTask(task){
+                        print("Task Aggiunto")
+                        taskModel.addTask(task: task, context: modelContext)
+                        dismiss()
                     }
-                    else{
-                        //Pop up Errore
-                        print("Task non aggiunto")
+                    else {
+                        // Optionally, you could add error handling here
+                        print("Task not added - potential overlap")
                     }
-                    
                 }){
-                    Text("Add").padding([.leading, .bottom, .trailing])
-                    .font(.system(size: 22, weight: .semibold))}.disabled(timeModel.timeGreater(startTime: task.startTime, endTime: task.endTime, startDate: task.startDate, endDate: task.endDate))
-                
-            }
-            GroupBox{
-                GroupBox {
-                    TextField("Nome", text:$task.name).foregroundStyle(.black)
+                    Text("Add")
+                        .padding([.leading, .bottom, .trailing])
+                        .font(.system(size: 22, weight: .semibold))
                 }
-                GroupBox {
-                    TextField("Luogo", text:$task.luogo).foregroundStyle(.black)
-                }
-            }.padding()
-            GroupBox{
-                HStack {
-                    Text("Start")
-                        .padding(.leading)
-                    Spacer()
-                    ZStack {
-                        DatePicker("", selection: $task.startDate, displayedComponents: .date)
-                            .padding(.trailing, 80.0)
-                        DatePicker("", selection: $task.startTime, displayedComponents: .hourAndMinute)
-                    }
-                }.padding(10.0)
-                
-                HStack {
-                    Text("End")
-                        .padding(.leading)
-                    Spacer()
-                    ZStack {
-                        DatePicker("", selection: $task.endDate, displayedComponents: .date)
-                            .padding(.trailing, 80.0)
-                        DatePicker("", selection: $task.endTime, displayedComponents: .hourAndMinute)
-                    }
-                }.padding(10.0)
+                .disabled(timeModel.timeGreater(startTime: starttime, endTime: endtime, startDate: starttime, endDate: endtime))
             }
-            Spacer()
             
+            Form {
+                   TextField("Nome", text: $task.name)
+                   TextField("Luogo", text: $task.location)
+                   
+                DatePicker("Inizio", selection: $starttime, displayedComponents: [.date, .hourAndMinute])
+                
+                DatePicker("Fine", selection: $endtime, displayedComponents: [.date, .hourAndMinute])
+               }
+            
+            Spacer()
         }
     }
 }
 
 #Preview {
     BotttomSheetView()
-        //.modelContainer(for: Task.self)
         .environmentObject(DateModel())
         .environmentObject(TimeModel())
-        .environmentObject(ToDoModel())
-        
+        .environmentObject(TaskModel())
 }

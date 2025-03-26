@@ -3,8 +3,9 @@ import SwiftData
 
 struct AdminView: View {
     @Environment(\.modelContext) private var context
-    @Query private var tasks: [Task]  // Questa query recupera tutti i task dal database
-
+    @Query private var tasks: [Task]
+    @EnvironmentObject var taskModel: TaskModel
+    
     var body: some View {
         VStack {
             // Bottone per stampare i dati
@@ -19,10 +20,6 @@ struct AdminView: View {
             }
             .padding()
         }
-        .onAppear {
-            // Carica i dati quando la vista appare
-            fetchTasks()
-        }
     }
 
     // Funzione per stampare i Task
@@ -32,26 +29,30 @@ struct AdminView: View {
         } else {
             print("Ecco i task nel database:")
             for task in tasks {
-                print("Task ID: \(task.id), Nome: \(task.name), Luogo: \(task.luogo), Inizio: \(task.startTime), Fine: \(task.endTime)")
+                print("Task ID: \(task.id), Nome: \(task.name), Luogo: \(task.location), Inizio: \(task.startDateTime), Fine: \(task.endDateTime)")
             }
         }
     }
 
     // Funzione per eliminare tutti i Task
     func deleteAllTasks() {
-        for task in tasks {
-            context.delete(task)
+        do {
+            // Use batch delete for efficiency
+            try context.delete(model: Task.self)
+            
+            // Alternatively, if you want to delete individually:
+            // tasks.forEach { context.delete($0) }
+            
+            try context.save()
+            print("Tutti i task sono stati eliminati.")
+        } catch {
+            print("Errore durante l'eliminazione dei task: \(error.localizedDescription)")
         }
-        try? context.save() // Salva il contesto dopo aver eliminato i task
-        print("Tutti i task sono stati eliminati.")
-    }
-    
-    // Funzione per ricaricare i task
-    func fetchTasks() {
-        // Non è necessario fare nulla perché @Query già recupera i task dal database
     }
 }
 
 #Preview {
-    AdminView().modelContainer(for: Task.self)
+    AdminView()
+        .modelContainer(for: Task.self)
+        .environmentObject(TaskModel())
 }

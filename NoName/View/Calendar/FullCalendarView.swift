@@ -5,9 +5,10 @@ struct FullCalendarView: View {
     @EnvironmentObject var dateModel: DateModel
     
     @State private var isSheetPresented = false
-    @State private var currentDay: Int = Calendar.current.component(.day, from: Date()) // mese corrente
-    @State private var currentMonth: Int = Calendar.current.component(.month, from: Date()) // mese corrente
-    @State private var currentYear: Int = Calendar.current.component(.year, from: Date()) // anno corrente
+    @State private var currentDay: Int = Calendar.current.component(.day, from: Date())
+    @State private var currentMonth: Int = Calendar.current.component(.month, from: Date())
+    @State private var currentYear: Int = Calendar.current.component(.year, from: Date())
+    
     
     let columns = Array(repeating: GridItem(.flexible()), count: 7)
     var body: some View {
@@ -40,6 +41,9 @@ struct FullCalendarView: View {
                                         Text("")
                                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                                     } else {
+                                        if currentDay == day && currentMonth == month{
+                                            Circle()
+                                        }
                                         Button(action: {
                                             dateModel.insertDate(year: 2025, month: month, day: day)
                                             isSheetPresented.toggle()
@@ -73,5 +77,5 @@ struct FullCalendarView: View {
     FullCalendarView()
         .environmentObject(DateModel())
         .environmentObject(TimeModel())
-        .environmentObject(ToDoModel()) 
+        .environmentObject(TaskModel()) 
 }

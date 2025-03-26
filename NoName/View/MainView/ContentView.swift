@@ -65,6 +65,7 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .environmentObject(DateModel())
         .environmentObject(TimeModel())
-        .environmentObject(ToDoModel())
+        .environmentObject(TaskModel()) 
 }
