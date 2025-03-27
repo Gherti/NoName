@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct CatalogueTaskView: View {
-    
     @EnvironmentObject var taskModel: TaskModel
     @EnvironmentObject var dateModel: DateModel
     @Environment(\.modelContext) var context
@@ -16,12 +15,11 @@ struct CatalogueTaskView: View {
             VStack {
                 ForEach(tasksForSelectedDate, id: \.id) { task in
                     let height = dateModel.dateHeight(start: task.startDateTime, end: task.endDateTime)
-                    
                     ZStack {
-                        
                         Button(action: {
-                            dateModel.viewTaskInfo = true
-                            dateModel.task = task
+                            withAnimation(.bouncy){
+                                dateModel.seeTaskInfo(taskSelected: task)
+                            }
                         }){
                             RoundedRectangle(cornerRadius: 5)
                                 .frame(width: 280, height: height)

@@ -54,6 +54,10 @@ struct FullCalendarView: View {
                                                 .foregroundStyle(.black)
                                         }.sheet(isPresented: $isSheetPresented){
                                             BottomDayView()
+                                        }.onChange(of: isSheetPresented) {
+                                            if !isSheetPresented{
+                                                dateModel.viewTaskInfo = false
+                                            }
                                         }
                                     }
                                 }

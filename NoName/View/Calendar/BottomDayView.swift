@@ -10,6 +10,7 @@ struct BottomDayView: View {
                 .frame(width: 40, height: 5)
                 .foregroundColor(Color.gray.opacity(0.5))
                 .padding(.top, 8)
+            
             HStack {
                 Button(action: {
                     withAnimation(.spring()) {
@@ -33,6 +34,7 @@ struct BottomDayView: View {
                         .font(.system(size: 22, weight: .semibold))
                 }
             }
+            
             if let selectedDate = dateModel.selectedDate {
                 let nameOfDay = dateModel.getWeekdayName(year: selectedDate.year, month: selectedDate.month, day: selectedDate.day) ?? "Unknown"
                 
@@ -41,28 +43,28 @@ struct BottomDayView: View {
                     .foregroundColor(.gray)
                     .fontWeight(.bold)
                     .padding()
-                    .offset(x: dragOffset) // Applica lo spostamento per l'animazione
+                    .offset(x: dragOffset)
                     .gesture(
                         DragGesture()
                             .onChanged { value in
-                                dragOffset = value.translation.width // Segue il dito
+                                dragOffset = value.translation.width
                             }
                             .onEnded { value in
-                                if value.translation.width < -100 { // Swipe verso sinistra (giorno successivo)
+                                if value.translation.width < -100 {
                                     withAnimation(.spring()) {
                                         dateModel.nextDay()
                                     }
-                                } else if value.translation.width > 100 { // Swipe verso destra (giorno precedente)
+                                } else if value.translation.width > 100 {
                                     withAnimation(.spring()) {
                                         dateModel.previousDay()
                                     }
                                 }
-                                dragOffset = 0 // Ritorna alla posizione iniziale
+                                dragOffset = 0
                             }
                     )
-                    .animation(.spring(), value: dragOffset) // Applica animazione al cambio
+                    .animation(.spring(), value: dragOffset)
             } else {
-                Text("Nessuna data selezionata")
+                Text("No Task for Today")
                     .font(.subheadline)
                     .padding()
                     .foregroundColor(.gray)
@@ -70,28 +72,27 @@ struct BottomDayView: View {
             
             Spacer()
             
-            CatalogueTaskView().overlay{
-                if dateModel.viewTaskInfo{
-                    ZStack{
-                        Color.black.opacity(0.5)
-                            .ignoresSafeArea()
-                            .onTapGesture {
-                                dateModel.viewTaskInfo = false
-                            }
-                        
-                        RoundedRectangle(cornerRadius: 20)
-                            .frame(width:300, height: 450)
-                            .foregroundColor(Color.gray)
-                            .offset(y: -50)
-                        TaskInfoView()
-                            .frame(width:300, height: 450)
-                            .offset(y: -50)
+            CatalogueTaskView()
+                .overlay(
+                    Group {
+                        if dateModel.viewTaskInfo {
+                            Color.black.opacity(0.5)
+                                .ignoresSafeArea()
+                                .onTapGesture {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        dateModel.viewTaskInfo = false
+                                    }
+                                }
+                            
+                            TaskInfoView()
+                                .frame(width: 300, height: 450)
+                                .offset(y: -50)
+                                .transition(.move(edge: .bottom))
+                        }
                     }
-                }
-            }
-            
-            ///Show Task
-        }.background(Color.black)
+                )
+        }
+        .background(Color.black)
     }
 }
 

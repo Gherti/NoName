@@ -10,6 +10,7 @@ struct ToDoView: View {
     @Binding var zoomSegment: Bool
     @EnvironmentObject var timeModel: TimeModel
     @EnvironmentObject var taskModel: TaskModel
+    @EnvironmentObject var dateModel: DateModel
     @Environment(\.modelContext) var context
     
     // Database
@@ -34,8 +35,9 @@ struct ToDoView: View {
                                     .onChanged { _ in
                                         if pressedIndex != task.id {
                                             pressedIndex = task.id
-                                            selectedSegment = task.id
-                                            print("Hai cliccato il segmento di colore \(task.id)")
+                                            withAnimation(.bouncy){
+                                                dateModel.seeTaskInfo(taskSelected: task)
+                                            }
                                         }
                                     }
                                     .onEnded { _ in

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State var selectedIndex = 0
+    @EnvironmentObject var dateModel: DateModel
     
     let icons = [
         "clock",
@@ -21,7 +22,23 @@ struct ContentView: View {
             ZStack{
                 switch selectedIndex {
                 case 0:
-                    ClockView()
+                    ClockView().overlay(
+                        Group {
+                            if dateModel.viewTaskInfo {
+                                Color.black.opacity(0.5)
+                                    .ignoresSafeArea()
+                                    .onTapGesture {
+                                        withAnimation(.easeInOut(duration: 0.2)) {
+                                            dateModel.viewTaskInfo = false
+                                        }
+                                    }
+                                
+                                TaskInfoView()
+                                    .frame(width: 300, height: 450)
+                                    .transition(.move(edge: .bottom))
+                            }
+                        }
+                    )
                 case 1:
                     CalendarView()
                 default:
@@ -35,23 +52,24 @@ struct ContentView: View {
                     ForEach(0..<3, id: \.self){number in
                         Button(action: {
                             self.selectedIndex = number
+                            dateModel.viewTaskInfo = false
                         }, label:{
                             Spacer()
                             if selectedIndex == number {
                                 if number != 1{
                                     Image(systemName: icons[number]+".fill")
-                                        .font(.system(size: 35))
+                                        .font(.system(size: 30))
                                         .foregroundStyle(.black)
                                 }
                                 else {
                                     Image(systemName: icons[number])
-                                        .font(.system(size: 35))
+                                        .font(.system(size: 30))
                                         .foregroundStyle(.black)
                                 }
                             }
                             else{
                                 Image(systemName: icons[number])
-                                    .font(.system(size: 35))
+                                    .font(.system(size: 30))
                                     .foregroundStyle(.gray)
                             }
                             Spacer()

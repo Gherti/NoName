@@ -1,33 +1,42 @@
 import SwiftUI
 
 struct TaskInfoView: View {
-    
     @EnvironmentObject var dateModel: DateModel
     
     var body: some View {
-        VStack{
-            HStack{
-                Spacer()
-                Button(action: {
-                    dateModel.viewTaskInfo = false
-                }){
-                    Image(systemName: "xmark.circle")
-                        .font(.system(size: 25))
-                        .foregroundStyle(.white.opacity(0.8))
-                        .padding(10)
-                }
-            }
-            
+        VStack {
             if let task = dateModel.task {
-                Text("Name: \(task.name)").foregroundStyle(.black.opacity(0.8)).padding(10)
-                Text("Location: \(task.location)").foregroundStyle(.black.opacity(0.8)).padding(10)
-                Text("Start: \(dateModel.formatTime(from: task.startDateTime))").foregroundStyle(.black.opacity(0.8)).padding(10)
-                Text("End: \(dateModel.formatTime(from: task.startDateTime))").foregroundStyle(.black.opacity(0.8)).padding(10)
-            } else {
-                Text("Nessun task selezionato")
+                    VStack(alignment: .leading, spacing: 15) {
+                        infoRow(label: "Name", value: task.name)
+                        infoRow(label: "Location", value: task.location)
+                        infoRow(label: "Start", value: dateModel.formatTime(from: task.startDateTime))
+                        infoRow(label: "End", value: dateModel.formatTime(from: task.endDateTime))
+                    }
+                    .padding()
+            }
+            else {
+                Text("No task selected")
+                    .foregroundStyle(.black.opacity(0.8))
             }
             
             Spacer()
+        }
+        .frame(maxWidth: .infinity) // This makes the background wider
+        .background(Color.gray)
+        .cornerRadius(20)
+        .transition(.move(edge: .bottom))
+    }
+    
+    @ViewBuilder
+    private func infoRow(label: String, value: String) -> some View {
+        HStack {
+            Text("\(label):")
+                .font(.headline)
+                .foregroundStyle(.black.opacity(0.6))
+            
+            Text(value)
+                .font(.body)
+                .foregroundStyle(.black.opacity(0.8))
         }
     }
 }

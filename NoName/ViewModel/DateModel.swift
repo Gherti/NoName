@@ -79,7 +79,10 @@ class DateModel: ObservableObject {
                 newYear += 1
             }
         }
-        
+        withAnimation(.easeInOut(duration: 0.2)) {
+            viewTaskInfo = false
+        }
+
         insertDate(year: newYear, month: newMonth, day: newDay)
     }
     
@@ -99,7 +102,10 @@ class DateModel: ObservableObject {
             let daysInPrevMonth = days(year: newYear, month: newMonth).filter { $0 != 0 }.count
             newDay = daysInPrevMonth
         }
-        
+        withAnimation(.easeInOut(duration: 0.2)) {
+            viewTaskInfo = false
+        }
+
         insertDate(year: newYear, month: newMonth, day: newDay)
     }
     
@@ -114,6 +120,12 @@ class DateModel: ObservableObject {
     func dateHeight(start: Date, end: Date) -> Double {
         let calendar = Calendar.current
         return Double(calendar.component(.minute, from: end) + calendar.component(.hour, from: end) * 60) - Double(calendar.component(.minute, from: start) + calendar.component(.hour, from: start) * 60)
+    }
+    
+    
+    func seeTaskInfo(taskSelected: Task){
+        viewTaskInfo.toggle()
+        task = taskSelected
     }
     
 }
