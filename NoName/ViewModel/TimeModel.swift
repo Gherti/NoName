@@ -48,15 +48,7 @@ class TimeModel: ObservableObject {
     }
     
     
-    func setSecondZero(date: Date) -> Date {
-        let calendar = Calendar.current
-        var components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date)
-        components.second = 0  // Imposta i secondi a zero senza toccare il resto
-        return calendar.date(from: components) ?? date
-    }
-    
-    func taskSize(_ task: Task) -> (startAng: Angle, endAng: Angle) {
-        
+    func timeSize(_ task: Task) -> (startAng: Angle, endAng: Angle) {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         let start = calendar.startOfDay(for: task.startDateTime)

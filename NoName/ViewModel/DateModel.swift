@@ -16,7 +16,7 @@ class DateModel: ObservableObject {
     @Published var viewTaskInfo: Bool = false
     @Published var task: Task? = nil
     
-    //CALENDAR VIEW
+    //FullCalendar view
     func days(year: Int, month: Int) -> [Int]{
         let calendar = Calendar.current
         
@@ -36,15 +36,7 @@ class DateModel: ObservableObject {
         return []
     }
     
-    func insertDate(year: Int, month: Int, day: Int){
-        selectedDate = (year: year, month: month, day: day)
-    }
-    
-    func getDate()-> (year: Int, month: Int, day: Int)?{
-        return selectedDate
-    }
-    
-    //FullCalendarVIew e BottomDayView
+    //BottomDayView
     func getWeekdayName(year: Int, month: Int, day: Int) -> String? {
         let calendar = Calendar.current
         let components = DateComponents(year: year, month: month, day: day)
@@ -60,8 +52,10 @@ class DateModel: ObservableObject {
         return nil
     }
     
+    func selectDate(year: Int, month: Int, day: Int){
+        selectedDate = (year: year, month: month, day: day)
+    }
     
-    //BottomDayView
     func nextDay() {
         guard let selectedDate = selectedDate else { return }
         
@@ -83,7 +77,7 @@ class DateModel: ObservableObject {
             viewTaskInfo = false
         }
 
-        insertDate(year: newYear, month: newMonth, day: newDay)
+        selectDate(year: newYear, month: newMonth, day: newDay)
     }
     
     func previousDay() {
@@ -106,7 +100,7 @@ class DateModel: ObservableObject {
             viewTaskInfo = false
         }
 
-        insertDate(year: newYear, month: newMonth, day: newDay)
+        selectDate(year: newYear, month: newMonth, day: newDay)
     }
     
     //CatalogueTaskView
@@ -117,15 +111,66 @@ class DateModel: ObservableObject {
         return dateFormatter.string(from: date)
     }
     
-    func dateHeight(start: Date, end: Date) -> Double {
+    func dateHeight(start: String, end: String) -> Double {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm"
+
+        guard let startDate = dateFormatter.date(from: start),
+              let endDate = dateFormatter.date(from: end) else {
+            return 0.0
+        }
+
         let calendar = Calendar.current
-        return Double(calendar.component(.minute, from: end) + calendar.component(.hour, from: end) * 60) - Double(calendar.component(.minute, from: start) + calendar.component(.hour, from: start) * 60)
+        let startMinutes = calendar.component(.hour, from: startDate) * 60 + calendar.component(.minute, from: startDate)
+        let endMinutes = calendar.component(.hour, from: endDate) * 60 + calendar.component(.minute, from: endDate)
+
+        return Double(endMinutes - startMinutes)
     }
+
+    
+    func dateSize(_ start: Date, _ end: Date) -> (String,String) {
+        let calendar = Calendar.current
+        var dateComponents = DateComponents()
+        dateComponents.year = selectedDate?.year
+        dateComponents.month = selectedDate?.month
+        dateComponents.day = selectedDate?.day
+        
+        guard let date = calendar.date(from: dateComponents) else { return ("","") }
+        
+        let startTaskDate = calendar.startOfDay(for: start)
+        let endTaskDate = calendar.startOfDay(for: end)
+        let selectedDay = calendar.startOfDay(for: date)
+        
+        var startStr: String = ""
+        var endStr: String = ""
+        
+        if startTaskDate < selectedDay && selectedDay < endTaskDate{
+            startStr = "00:00"
+            endStr = "23:59"
+        }
+        else if startTaskDate == selectedDay && selectedDay < endTaskDate{
+            startStr = formatTime(from: start)
+            endStr = "23:59"
+        }
+        else if startTaskDate < selectedDay && selectedDay == endTaskDate{
+            endStr = formatTime(from: end)
+            startStr = "00:00"
+        }
+        else if startTaskDate == selectedDay && selectedDay == endTaskDate{
+            startStr = formatTime(from: start)
+            endStr = formatTime(from: end)
+        }
+        
+        return  (startStr,endStr)
+    }
+    
     
     
     func seeTaskInfo(taskSelected: Task){
         viewTaskInfo.toggle()
         task = taskSelected
     }
+    
+    
     
 }

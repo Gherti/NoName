@@ -45,7 +45,7 @@ struct FullCalendarView: View {
                                             Circle()
                                         }*/
                                         Button(action: {
-                                            dateModel.insertDate(year: 2025, month: month, day: day)
+                                            dateModel.selectDate(year: currentYear, month: month, day: day)
                                             isSheetPresented.toggle()
                                         }) {
                                             Text("\(day)")

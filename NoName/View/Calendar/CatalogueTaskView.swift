@@ -14,7 +14,9 @@ struct CatalogueTaskView: View {
         ScrollView {
             VStack {
                 ForEach(tasksForSelectedDate, id: \.id) { task in
-                    let height = dateModel.dateHeight(start: task.startDateTime, end: task.endDateTime)
+                    
+                    let (startTimeString,endTimeString) = dateModel.dateSize(task.startDateTime,  task.endDateTime)
+                    let height = dateModel.dateHeight(start: startTimeString, end: endTimeString)
                     ZStack {
                         Button(action: {
                             withAnimation(.bouncy){
@@ -51,7 +53,7 @@ struct CatalogueTaskView: View {
                             .frame(width: 350, height: 1)
                             .foregroundColor(.gray.opacity(0.7))
                             .offset(x: 0, y: -height / 2)
-                        Text(dateModel.formatTime(from: task.startDateTime))
+                        Text(startTimeString)
                             .offset(x: -157, y: -(height / 2 + 10))
                             .foregroundColor(.gray.opacity(0.7))
                             .fontWeight(.bold)
@@ -60,7 +62,7 @@ struct CatalogueTaskView: View {
                             .frame(width: 350, height: 1)
                             .foregroundColor(.gray.opacity(0.7))
                             .offset(x: 0, y: height / 2)
-                        Text(dateModel.formatTime(from: task.endDateTime))
+                        Text(endTimeString)
                             .offset(x: 157, y: height / 2 + 10)
                             .foregroundColor(.gray.opacity(0.7))
                             .fontWeight(.bold)

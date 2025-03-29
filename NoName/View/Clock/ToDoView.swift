@@ -25,7 +25,7 @@ struct ToDoView: View {
             let littlCircleFrame = (geometry.size.width * 320) / 402
             ZStack {
                 ForEach(taskModel.tasks) { task in
-                    let (startAngle, endAngle) = timeModel.taskSize(task)
+                    let (startAngle, endAngle) = timeModel.timeSize(task)
                     if startAngle != Angle.degrees(0) || endAngle != Angle.degrees(0) {
                         PieSlice(startAngle: startAngle, endAngle: endAngle, bigCircleFrame: bigCircleFrame, littlCircleFrame: littlCircleFrame)
                             .fill(.red)
@@ -35,12 +35,12 @@ struct ToDoView: View {
                                     .onChanged { _ in
                                         if pressedIndex != task.id {
                                             pressedIndex = task.id
-                                            withAnimation(.bouncy){
-                                                dateModel.seeTaskInfo(taskSelected: task)
-                                            }
                                         }
                                     }
                                     .onEnded { _ in
+                                        withAnimation(.bouncy){
+                                            dateModel.seeTaskInfo(taskSelected: task)
+                                        }
                                         pressedIndex = nil
                                     }
                             )

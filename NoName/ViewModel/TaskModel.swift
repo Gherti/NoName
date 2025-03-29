@@ -37,7 +37,7 @@ class TaskModel: ObservableObject {
         return false
     }
     
-    
+    //CatalogueTaskView
     func getTasks(selectedDate: (year: Int, month: Int, day: Int)?) -> [Task] {
         guard let selectedDate = selectedDate else { return [] }
         
@@ -53,9 +53,16 @@ class TaskModel: ObservableObject {
         
         // Filtriamo i task con la stessa data
         return tasks.filter { task in
-            let taskDate = calendar.startOfDay(for: task.startDateTime)
+            let startTaskDate = calendar.startOfDay(for: task.startDateTime)
+            let endTaskDate = calendar.startOfDay(for: task.endDateTime)
             let selectedDay = calendar.startOfDay(for: date)
-            return taskDate == selectedDay
+            
+            if startTaskDate > selectedDay || selectedDay > endTaskDate{
+                return false
+            }
+            else{
+                return true
+            }
         }
     }
 }
