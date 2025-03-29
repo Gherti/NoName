@@ -3,9 +3,14 @@ import SwiftData
 
 struct ClockView: View {
     @EnvironmentObject var timeModel: TimeModel
+    @Environment(\.modelContext) var modelContext
+    
     
     @State var zoomSegment: Bool = false
     @State private var isSheetPresented = false
+    @State private var isDentsPresented: Bool = false
+    @State private var tags = Tag()
+    
     
     var body: some View {
             ZStack{
@@ -13,7 +18,24 @@ struct ClockView: View {
                 
                 VStack{
                     HStack{
-                        Text("Clock").padding().font(.system(size: 30, weight: .bold, design: .default))
+                        Menu {
+                            Button(action: {
+                                
+                                isDentsPresented.toggle()
+                                
+                            }) {
+                                
+                                Label("Add Tag", systemImage: "tag")
+                            }
+                        } label: {
+                            Image(systemName: "ellipsis.circle")
+                                .foregroundColor(.black)
+                                .font(.system(size: 35))
+                                .padding()
+                        }
+                        .sheet(isPresented: $isDentsPresented){
+                            TextField("Name", text: $tags.name)
+                        }
                         Spacer()
                         
                         Button(action:{
@@ -51,6 +73,8 @@ struct ClockView: View {
             }
     }
 }
+
+
 
 #Preview {
     ClockView()

@@ -20,6 +20,7 @@ struct NoNameApp: App {
                 .environmentObject(timeModel)
                 .environmentObject(taskModel)// Add this line
                 .modelContainer(for: Task.self)
+                .modelContainer(for: Tag.self)
         }
     }
 }
