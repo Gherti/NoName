@@ -9,6 +9,8 @@ import SwiftUI
 
 @main
 struct NoNameApp: App {
+    
+    
     @StateObject private var timeModel = TimeModel()
     @StateObject private var dateModel = DateModel()
     @StateObject private var taskModel = TaskModel()// Add this line
@@ -19,8 +21,7 @@ struct NoNameApp: App {
                 .environmentObject(dateModel)
                 .environmentObject(timeModel)
                 .environmentObject(taskModel)// Add this line
-                .modelContainer(for: Task.self)
-                .modelContainer(for: Tag.self)
+                .modelContainer(for: [Task.self, Tag.self], inMemory: false, isUndoEnabled: true)
         }
     }
 }

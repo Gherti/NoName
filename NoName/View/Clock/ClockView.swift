@@ -9,7 +9,7 @@ struct ClockView: View {
     @State var zoomSegment: Bool = false
     @State private var isSheetPresented = false
     @State private var isDentsPresented: Bool = false
-    @State private var tags = Tag()
+    
     
     
     var body: some View {
@@ -20,7 +20,6 @@ struct ClockView: View {
                     HStack{
                         Menu {
                             Button(action: {
-                                
                                 isDentsPresented.toggle()
                                 
                             }) {
@@ -34,7 +33,7 @@ struct ClockView: View {
                                 .padding()
                         }
                         .sheet(isPresented: $isDentsPresented){
-                            TextField("Name", text: $tags.name)
+                            
                         }
                         Spacer()
                         
