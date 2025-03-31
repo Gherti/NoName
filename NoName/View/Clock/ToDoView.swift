@@ -28,7 +28,7 @@ struct ToDoView: View {
                     let (startAngle, endAngle) = timeModel.timeSize(task)
                     if startAngle != Angle.degrees(0) || endAngle != Angle.degrees(0) {
                         PieSlice(startAngle: startAngle, endAngle: endAngle, bigCircleFrame: bigCircleFrame, littlCircleFrame: littlCircleFrame)
-                            .fill(.red)
+                            .fill(Color(hex: task.tags[0].color))
                             .opacity((pressedIndex == task.id) ? 0.5 : 1)
                             .gesture(
                                 DragGesture(minimumDistance: 0)
@@ -89,6 +89,7 @@ struct DonutCutout: View {
             .blendMode(.destinationOut)
     }
 }
+
 
 #Preview {
     ToDoView(zoomSegment: .constant(false))

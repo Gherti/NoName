@@ -55,15 +55,32 @@ struct BotttomSheetView: View {
             }
             
             Form {
-                   TextField("Nome", text: $task.name)
-                   TextField("Luogo", text: $task.location)
+               TextField("Nome", text: $task.name)
+               TextField("Luogo", text: $task.location)
                    
                 DatePicker("Inizio", selection: $starttime, displayedComponents: [.date, .hourAndMinute])
                 
                 DatePicker("Fine", selection: $endtime, displayedComponents: [.date, .hourAndMinute])
+                
+                Menu {
+                    ForEach(taskModel.tags){tag in
+                        Button(action: {
+                            task.tags.append(tag)
+                        }) {
+                            Text(tag.name)
+                        }
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                        .foregroundColor(.black)
+                        .font(.system(size: 20))
+                        .padding()
+                }
                }
             
             Spacer()
+        }.onAppear {
+            taskModel.fetchTags(context: modelContext)
         }
     }
 }

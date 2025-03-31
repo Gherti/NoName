@@ -33,7 +33,7 @@ struct ClockView: View {
                                 .padding()
                         }
                         .sheet(isPresented: $isDentsPresented){
-                            
+                            BottomTagView()
                         }
                         Spacer()
                         

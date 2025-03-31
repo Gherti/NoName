@@ -5,6 +5,7 @@ import SwiftUI
 
 class TaskModel: ObservableObject {
     @Published var tasks: [Task] = []
+    @Published var tags: [Tag] = []
     
     func fetchTasks(context: ModelContext) {
             let descriptor = FetchDescriptor<Task>(sortBy: [SortDescriptor(\.startDateTime)])
@@ -65,5 +66,22 @@ class TaskModel: ObservableObject {
             }
         }
     }
+    
+    //TAG
+    func addTag(tag: Tag, context: ModelContext) {
+        context.insert(tag)
+        print(tag.name)
+        fetchTags(context: context) // Aggiorna la lista
+    }
+    
+    func fetchTags(context: ModelContext) {
+        let descriptor = FetchDescriptor<Tag>()
+            do {
+                tags = try context.fetch(descriptor)
+                print("Fetched \(tags.count) tags")
+            } catch {
+                print("Error fetching tasks: \(error.localizedDescription)")
+            }
+        }
 }
 
