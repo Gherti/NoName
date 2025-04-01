@@ -9,7 +9,7 @@ import SwiftUI
 
 struct BottomTagView: View {
     @Environment(\.dismiss) var dismiss
-    @Environment(\.modelContext) var modelContext
+    @Environment(\.modelContext) var contextt
     @EnvironmentObject var taskModel: TaskModel
     
     
@@ -19,6 +19,11 @@ struct BottomTagView: View {
     
     var body: some View {
         VStack{
+            RoundedRectangle(cornerRadius: 4)
+                .frame(width: 40, height: 5)
+                .foregroundColor(Color.gray.opacity(0.5))
+                .padding(.top, 8)
+            
             HStack{
                 Button(action: {
                     dismiss()
@@ -36,7 +41,7 @@ struct BottomTagView: View {
                     tag.name = name
                     tag.color = color.toHex()
                     if !taskModel.checkTag(tagToCheck: tag) {
-                        taskModel.addTag(tag: tag, context: modelContext)
+                        taskModel.addTag(tag: tag, context: contextt)
                         dismiss()
                     }
                     else{

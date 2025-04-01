@@ -49,10 +49,13 @@ struct AdminView: View {
 
     // Funzione per eliminare tutti i Task
     func deleteAllTasks() {
+        for task in tasks {
+            context.delete(task)
+        }
         do {
-            try context.delete(model: Task.self)
             try context.save()
             print("Tutti i task sono stati eliminati.")
+            reloadTasksAndTags() // Ricarica i dati
         } catch {
             print("Errore durante l'eliminazione dei task: \(error.localizedDescription)")
         }
@@ -60,10 +63,13 @@ struct AdminView: View {
 
     // Funzione per eliminare tutti i Tag
     func deleteAllTags() {
+        for tag in tags {
+            context.delete(tag)
+        }
         do {
-            try context.delete(model: Tag.self)
             try context.save()
             print("Tutti i tag sono stati eliminati.")
+            reloadTasksAndTags() // Ricarica i dati
         } catch {
             print("Errore durante l'eliminazione dei tag: \(error.localizedDescription)")
         }
@@ -71,14 +77,25 @@ struct AdminView: View {
 
     // Funzione per eliminare sia i Task che i Tag
     func deleteAllTasksAndTags() {
+        for task in tasks {
+            context.delete(task)
+        }
+        for tag in tags {
+            context.delete(tag)
+        }
         do {
-            try context.delete(model: Task.self)
-            try context.delete(model: Tag.self)
             try context.save()
             print("Tutti i task e i tag sono stati eliminati.")
+            reloadTasksAndTags() // Ricarica i dati
         } catch {
             print("Errore durante l'eliminazione di task e tag: \(error.localizedDescription)")
         }
+    }
+    
+    // Funzione per ricaricare i task e i tag
+    func reloadTasksAndTags() {
+        taskModel.fetchTasks(context: context)
+        taskModel.fetchTags(context: context)
     }
 }
 

@@ -1,7 +1,6 @@
 import SwiftUI
 import SwiftData
 
-
 struct ToDoView: View {
     @State private var selectedSegment: UUID? = nil
     @State private var pressedIndex: UUID? = nil
@@ -9,16 +8,10 @@ struct ToDoView: View {
     // Oggetti provenienti da fuori
     @Binding var zoomSegment: Bool
     
-    
     @EnvironmentObject var timeModel: TimeModel
     @EnvironmentObject var taskModel: TaskModel
     @EnvironmentObject var dateModel: DateModel
     @Environment(\.modelContext) var context
-    
-    // Database
-    //@Query private var tasks: [Task]
-    //DA AGGIUSTARE E IMPLEMENTARE IL FETCH
-    
     
     // View
     var body: some View {
@@ -28,24 +21,38 @@ struct ToDoView: View {
             ZStack {
                 ForEach(taskModel.tasks) { task in
                     let (startAngle, endAngle) = timeModel.timeSize(task)
-                    if startAngle != Angle.degrees(0) || endAngle != Angle.degrees(0) {
-                        PieSlice(startAngle: startAngle, endAngle: endAngle, bigCircleFrame: bigCircleFrame, littlCircleFrame: littlCircleFrame)
-                            .fill(Color(hex: task.tags[0].color))
-                            .opacity((pressedIndex == task.id) ? 0.5 : 1)
-                            .gesture(
-                                DragGesture(minimumDistance: 0)
-                                    .onChanged { _ in
-                                        if pressedIndex != task.id {
-                                            pressedIndex = task.id
+                    if startAngle != Angle.degrees(0) || endAngle != Angle.degrees(0){
+                        ZStack {
+                            // Sezione del task
+                            PieSlice(startAngle: startAngle, endAngle: endAngle, bigCircleFrame: bigCircleFrame, littlCircleFrame: littlCircleFrame)
+                                .fill(Color(hex: task.tag?.color ?? "#808080"))
+                                .opacity((pressedIndex == task.id) ? 0.5 : 1)
+                                .gesture(
+                                    DragGesture(minimumDistance: 0)
+                                        .onChanged { _ in
+                                            if pressedIndex != task.id {
+                                                pressedIndex = task.id
+                                            }
                                         }
-                                    }
-                                    .onEnded { _ in
-                                        withAnimation(.bouncy){
-                                            dateModel.seeTaskInfo(taskSelected: task)
+                                        .onEnded { _ in
+                                            withAnimation(.bouncy){
+                                                dateModel.seeTaskInfo(taskSelected: task)
+                                            }
+                                            pressedIndex = nil
                                         }
-                                        pressedIndex = nil
-                                    }
-                            )
+                                )
+                            
+                            // Posizionamento dell'emoji
+                            if let tag = task.tag, !tag.emoji.isEmpty {
+                                EmojiView(
+                                    emoji: tag.emoji,
+                                    startAngle: startAngle,
+                                    endAngle: endAngle,
+                                    radius: (bigCircleFrame + littlCircleFrame) / 3.9,
+                                    center: CGPoint(x: bigCircleFrame/2, y: bigCircleFrame/2)
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -60,11 +67,34 @@ struct ToDoView: View {
                 taskModel.fetchTags(context: context)
                 hasLoadedData = true
             }
-                
         }
     }
 }
 
+struct EmojiView: View {
+    let emoji: String
+    let startAngle: Angle
+    let endAngle: Angle
+    let radius: CGFloat
+    let center: CGPoint
+    
+    var body: some View {
+        // Calcola l'angolo mediano del settore
+        let midAngle = Angle(degrees: (startAngle.degrees + endAngle.degrees) / 2)
+        
+        // Calcola la posizione in coordinate cartesiane
+        let angleInRadians = midAngle.radians
+        let x = center.x + radius * cos(CGFloat(angleInRadians))
+        let y = center.y + radius * sin(CGFloat(angleInRadians))
+        
+        // Ruota l'emoji in modo che la parte inferiore (default: verso il basso)
+        // punti verso il centro. Per farlo, applica una rotazione pari a midAngle + 90°.
+        return Text(emoji)
+            .font(.system(size: 16))
+            .rotationEffect(Angle(degrees: midAngle.degrees + 90))
+            .position(x: x, y: y)
+    }
+}
 
 
 struct PieSlice: Shape {
@@ -97,7 +127,6 @@ struct DonutCutout: View {
     }
 }
 
-
 #Preview {
     ToDoView(zoomSegment: .constant(false))
         //.modelContainer(for: Task.self)
@@ -105,3 +134,4 @@ struct DonutCutout: View {
         .environmentObject(TimeModel())
         .environmentObject(TaskModel())
 }
+

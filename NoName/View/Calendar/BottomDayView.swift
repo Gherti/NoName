@@ -13,9 +13,8 @@ struct BottomDayView: View {
             
             HStack {
                 Button(action: {
-                    withAnimation(.spring()) {
-                        dateModel.previousDay()
-                    }
+                    dateModel.previousDay()
+                    
                 }) {
                     Text("Previous")
                         .padding([.leading, .bottom, .trailing])
@@ -25,9 +24,9 @@ struct BottomDayView: View {
                 Spacer()
                 
                 Button(action: {
-                    withAnimation(.spring()) {
+                    
                         dateModel.nextDay()
-                    }
+                    
                 }) {
                     Text("Next")
                         .padding([.leading, .bottom, .trailing])
@@ -43,26 +42,6 @@ struct BottomDayView: View {
                     .foregroundColor(.gray)
                     .fontWeight(.bold)
                     .padding()
-                    .offset(x: dragOffset)
-                    .gesture(
-                        DragGesture()
-                            .onChanged { value in
-                                dragOffset = value.translation.width
-                            }
-                            .onEnded { value in
-                                if value.translation.width < -100 {
-                                    withAnimation(.spring()) {
-                                        dateModel.nextDay()
-                                    }
-                                } else if value.translation.width > 100 {
-                                    withAnimation(.spring()) {
-                                        dateModel.previousDay()
-                                    }
-                                }
-                                dragOffset = 0
-                            }
-                    )
-                    .animation(.spring(), value: dragOffset)
             } else {
                 Text("No Task for Today")
                     .font(.subheadline)

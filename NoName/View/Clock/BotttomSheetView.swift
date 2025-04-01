@@ -3,7 +3,7 @@ import SwiftData
 
 struct BotttomSheetView: View {
     @Environment(\.dismiss) var dismiss
-    @Environment(\.modelContext) var modelContext
+    @Environment(\.modelContext) var contextt
     
     
     @State private var task = Task()
@@ -39,7 +39,7 @@ struct BotttomSheetView: View {
                     task.endDateTime = endtime
                     if !taskModel.checkTask(task){
                         print("Task Aggiunto")
-                        taskModel.addTask(task: task, context: modelContext)
+                        taskModel.addTask(task: task, context: contextt)
                         dismiss()
                     }
                     else {
@@ -65,20 +65,22 @@ struct BotttomSheetView: View {
                 Menu {
                     ForEach(taskModel.tags){tag in
                         Button(action: {
-                            task.tags.append(tag)
+                            task.tag = tag
                         }) {
                             Text(tag.name)
+                            Image(systemName: "tag.fill")
+                                .foregroundStyle(Color(hex: tag.color), .primary)
                         }
                     }
                 } label: {
-                    Image(systemName: "ellipsis.circle")
-                        .foregroundColor(.black)
-                        .font(.system(size: 20))
-                        .padding()
-                }
-               }
-            
-            Spacer()
+                    HStack {
+                        Text("Tag").foregroundStyle(.black)
+                        Spacer()
+                        Text(task.tag?.name ?? "Unselected").foregroundStyle(.gray)
+                        Image(systemName: "chevron.up.chevron.down").foregroundStyle(.gray)
+                    }
+                 }
+            }
         }
     }
 }

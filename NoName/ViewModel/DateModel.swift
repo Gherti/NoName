@@ -73,10 +73,11 @@ class DateModel: ObservableObject {
                 newYear += 1
             }
         }
-        withAnimation(.easeInOut(duration: 0.2)) {
-            viewTaskInfo = false
+        if viewTaskInfo{
+            withAnimation(.easeInOut(duration: 0.1)) {
+                viewTaskInfo = false
+            }
         }
-
         selectDate(year: newYear, month: newMonth, day: newDay)
     }
     
@@ -96,8 +97,10 @@ class DateModel: ObservableObject {
             let daysInPrevMonth = days(year: newYear, month: newMonth).filter { $0 != 0 }.count
             newDay = daysInPrevMonth
         }
-        withAnimation(.easeInOut(duration: 0.2)) {
-            viewTaskInfo = false
+        if viewTaskInfo{
+            withAnimation(.easeInOut(duration: 0.1)) {
+                viewTaskInfo = false
+            }
         }
 
         selectDate(year: newYear, month: newMonth, day: newDay)

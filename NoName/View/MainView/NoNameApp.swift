@@ -21,7 +21,7 @@ struct NoNameApp: App {
                 .environmentObject(dateModel)
                 .environmentObject(timeModel)
                 .environmentObject(taskModel)// Add this line
-                .modelContainer(for: [Task.self, Tag.self], inMemory: false, isUndoEnabled: true)
+                .modelContainer(for: [Task.self, Tag.self])
         }
     }
 }

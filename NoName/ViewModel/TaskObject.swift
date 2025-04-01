@@ -8,21 +8,21 @@ final class Task {
     var location: String
     var startDateTime: Date
     var endDateTime: Date
-    var tags: [Tag] // Relazione molti-a-molti
+    var tag: Tag? // Relazione molti-a-molti
 
     init(
         name: String = "",
         location: String = "",
         startDateTime: Date = .now,
         endDateTime: Date = .now,
-        tags: [Tag] = []
+        tag: Tag? = nil
     ) {
         self.id = UUID()
         self.name = name
         self.location = location
         self.startDateTime = startDateTime
         self.endDateTime = endDateTime
-        self.tags = tags
+        self.tag = tag
     }
 }
 

@@ -19,12 +19,14 @@ class TaskModel: ObservableObject {
     
     func addTask(task: Task, context: ModelContext) {
         context.insert(task)
-        print(task.name)
+        print("Aggiunto task: \(task.name)")
+        saveContext(context)  // Aggiungi il salvataggio esplicito
         fetchTasks(context: context) // Aggiorna la lista
     }
-    
+
     func deleteTask(task: Task, context: ModelContext) {
         context.delete(task)
+        saveContext(context)  // Aggiungi il salvataggio esplicito
         fetchTasks(context: context) // Aggiorna la lista
     }
     
@@ -36,6 +38,15 @@ class TaskModel: ObservableObject {
             }
         }
         return false
+    }
+    
+    func saveContext(_ context: ModelContext) {
+        do {
+            try context.save()
+            print("Salvato il contesto correttamente")
+        } catch {
+            print("Errore durante il salvataggio del contesto: \(error.localizedDescription)")
+        }
     }
     
     //CatalogueTaskView

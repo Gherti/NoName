@@ -24,7 +24,6 @@ struct TaskInfoView: View {
         .frame(maxWidth: .infinity) // This makes the background wider
         .background(Color.gray)
         .cornerRadius(20)
-        .transition(.move(edge: .bottom))
     }
     
     @ViewBuilder

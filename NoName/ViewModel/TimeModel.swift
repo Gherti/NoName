@@ -63,10 +63,8 @@ class TimeModel: ObservableObject {
         var endAng: Double = 0.0
         
         if today < start || today > end {
-            
             return (.degrees(0), .degrees(0)) // Task non in corso oggi
         }
-        
         
         if today == start {
             startAng = Double(startMinutes)
@@ -84,6 +82,14 @@ class TimeModel: ObservableObject {
         let showPM = showClock
         let correctedStart = showPM ? max(startAng, 720) : min(startAng, 720)
         let correctedEnd = showPM ? max(endAng, 720) : min(endAng, 720)
+        
+        if correctedEnd == 0 && correctedStart == 0{
+            return (.degrees(0), .degrees(0))
+        }
+        else if correctedEnd == 720 && correctedStart == 720{
+            return (.degrees(0), .degrees(0))
+        }
+        
         return (.degrees(correctedStart * 0.5 - 90), .degrees(correctedEnd * 0.5 - 90))
     }
 
