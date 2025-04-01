@@ -15,8 +15,7 @@ struct BottomTagView: View {
     
     @State private var tag = Tag()
     @State private var name: String = ""
-    @State private var color: String = ""
-    
+    @State private var color: Color = .white
     
     var body: some View {
         VStack{
@@ -35,38 +34,50 @@ struct BottomTagView: View {
                 Button(action: {
                     
                     tag.name = name
+                    tag.color = color.toHex()
+                    if !taskModel.checkTag(tagToCheck: tag) {
+                        taskModel.addTag(tag: tag, context: modelContext)
+                        dismiss()
+                    }
+                    else{
+                        print("Tag già esistente")
+                    }
                     //Controllo tag
-                    taskModel.addTag(tag: tag, context: modelContext)
-                    dismiss()
+                    
+                    
                 }){
                     Text("Add")
                         .padding([.leading, .bottom, .trailing])
                         .font(.system(size: 22, weight: .semibold))
                 }
-                .disabled(name.isEmpty || tag.color.isEmpty)
+                .disabled(name.isEmpty || color.isWhiteOrNearWhite())
             }
             Form{
                 TextField("Name", text: $name)
                 
                 TextField("Emoji", text: $tag.emoji)
-                ColorPicker("Scegli un colore", selection: Binding(
-                    get: { Color(hex: tag.color) },
-                    set: { tag.color = $0.toHex() }
-                ))
+                ColorPicker("Scegli un colore", selection: $color)
+                
             }
-            
         }
     }
 }
 
 extension Color {
-    // Converti Color in HEX String
+    // Converti Color in HEX String usando getRed
     func toHex() -> String {
-        guard let components = UIColor(self).cgColor.components else { return "#FFFFFF" }
-        let r = Int(components[0] * 255)
-        let g = Int(components[1] * 255)
-        let b = Int(components[2] * 255)
-        return String(format: "#%02X%02X%02X", r, g, b)
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+        let uiColor = UIColor(self)
+        if uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha) {
+            let r = Int(red * 255)
+            let g = Int(green * 255)
+            let b = Int(blue * 255)
+            return String(format: "#%02X%02X%02X", r, g, b)
+        }
+        return "#FFFFFF"  // fallback se getRed fallisce
     }
     
     // Crea un Color da HEX String
@@ -79,7 +90,24 @@ extension Color {
         let b = Double(int & 0xFF) / 255.0
         self.init(red: r, green: g, blue: b)
     }
+    
+    // Verifica se il colore è bianco o molto vicino al bianco
+    func isWhiteOrNearWhite() -> Bool {
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+        let uiColor = UIColor(self)
+        
+        if uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha) {
+            // Consideriamo il colore come bianco se tutti i componenti RGB sono vicini a 1.0
+            return (red > 0.95 && green > 0.95 && blue > 0.95)
+        }
+        
+        return true  // fallback, assume bianco se la conversione fallisce
+    }
 }
+
 
 #Preview {
     BottomTagView()

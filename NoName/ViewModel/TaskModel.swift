@@ -83,5 +83,9 @@ class TaskModel: ObservableObject {
                 print("Error fetching tasks: \(error.localizedDescription)")
             }
         }
+    
+    func checkTag(tagToCheck: Tag) -> Bool {
+        return tags.contains(where: { $0.name == tagToCheck.name}) || tags.contains(where: { $0.color == tagToCheck.color})
+    }
 }
 

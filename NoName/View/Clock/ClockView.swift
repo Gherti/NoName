@@ -18,6 +18,8 @@ struct ClockView: View {
                 
                 VStack{
                     HStack{
+                        
+                        //3 PUNTINI
                         Menu {
                             Button(action: {
                                 isDentsPresented.toggle()
@@ -33,10 +35,12 @@ struct ClockView: View {
                                 .padding()
                         }
                         .sheet(isPresented: $isDentsPresented){
-                            BottomTagView()
+                            BottomTagView().presentationDetents([.medium])
                         }
+                        
                         Spacer()
                         
+                        //PULSTANTE +
                         Button(action:{
                             if !isSheetPresented {
                                 isSheetPresented = true
@@ -49,10 +53,11 @@ struct ClockView: View {
                         }
                         
                     }
+                    
                     Spacer()
+                    //CAMBIO ARCO ORARIO
                     HStack {
                         Spacer()
-                        
                         Button(action:{
                             timeModel.toggleClock()
                         }){

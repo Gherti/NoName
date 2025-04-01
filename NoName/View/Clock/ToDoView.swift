@@ -5,9 +5,11 @@ import SwiftData
 struct ToDoView: View {
     @State private var selectedSegment: UUID? = nil
     @State private var pressedIndex: UUID? = nil
-    
+    @State private var hasLoadedData: Bool = false
     // Oggetti provenienti da fuori
     @Binding var zoomSegment: Bool
+    
+    
     @EnvironmentObject var timeModel: TimeModel
     @EnvironmentObject var taskModel: TaskModel
     @EnvironmentObject var dateModel: DateModel
@@ -53,7 +55,12 @@ struct ToDoView: View {
             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
         }
         .onAppear {
-            taskModel.fetchTasks(context: context)
+            if !hasLoadedData {
+                taskModel.fetchTasks(context: context)
+                taskModel.fetchTags(context: context)
+                hasLoadedData = true
+            }
+                
         }
     }
 }

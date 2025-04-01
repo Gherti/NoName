@@ -79,8 +79,6 @@ struct BotttomSheetView: View {
                }
             
             Spacer()
-        }.onAppear {
-            taskModel.fetchTags(context: modelContext)
         }
     }
 }
