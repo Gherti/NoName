@@ -131,7 +131,7 @@ class DateModel: ObservableObject {
     }
 
     
-    func dateSize(_ start: Date, _ end: Date) -> (String,String) {
+    func dateSize(_ start: Date, _ end: Date, _ task: Task) -> (String,String) {
         let calendar = Calendar.current
         var dateComponents = DateComponents()
         dateComponents.year = selectedDate?.year
@@ -159,10 +159,43 @@ class DateModel: ObservableObject {
             endStr = formatTime(from: end)
             startStr = "00:00"
         }
-        else if startTaskDate == selectedDay && selectedDay == endTaskDate{
+        else /*if startTaskDate == selectedDay && selectedDay  == endTaskDate*/{
+            
             startStr = formatTime(from: start)
             endStr = formatTime(from: end)
         }
+        /*else {
+            if let rep = task?.repetition{
+                let dayDiffStart = calendar.dateComponents([.day], from: start, to: selectedDay).day ?? 0
+                let dayDiffEnd = calendar.dateComponents([.day], from: end, to: selectedDay).day ?? 0
+                switch rep.unit {
+                case .day:
+                    <#code#>
+                case .week:
+                    if dayDiffStart == dayDiffEnd{
+                        startStr = formatTime(from: start)
+                        endStr = formatTime(from: end)
+                    }
+                    else if dayDiffStart % (rep.interval * 7) == 0{
+                        startStr = formatTime(from: start)
+                        endStr = "23:59"
+                    }
+                    else if dayDiffEnd % (rep.interval * 7) == 0{
+                        endStr = formatTime(from: end)
+                        startStr = "00:00"
+                    }
+                    else{
+                        startStr = "00:00"
+                        endStr = "23:59"
+                    }
+                    
+                case .month:
+                    <#code#>
+                case .year:
+                    <#code#>
+                }
+            }
+        }*/
         
         return  (startStr,endStr)
     }

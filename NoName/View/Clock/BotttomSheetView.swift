@@ -4,82 +4,148 @@ import SwiftData
 struct BotttomSheetView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) var contextt
-    
-    
+
     @State private var task = Task()
-    
+
     @EnvironmentObject var taskModel: TaskModel
     @EnvironmentObject var timeModel: TimeModel
-    
-    @State private var endtime: Date = Date()
+
+    // Date pickers for start and end times
     @State private var starttime: Date = Date()
-    
+    @State private var endtime: Date = Date()
+
+    // Repetition UI state
+    @State private var repetitionEnabled: Bool = false
+    @State private var customInterval: Int = 1
+    @State private var repetitionUnit: RepetitionUnit = .day
+
+    // End repetition toggle and date
+    @State private var isEndRepetitionOn: Bool = false
+    @State private var endrep: Date = Date()
+
+    let numbers = Array(1...999)  // For selecting the interval
+
     var body: some View {
-        VStack{
+        VStack {
+            // Drag indicator
             RoundedRectangle(cornerRadius: 4)
                 .frame(width: 40, height: 5)
                 .foregroundColor(Color.gray.opacity(0.5))
                 .padding(.top, 8)
-            
-            HStack{
+
+            // Navigation bar buttons
+            HStack {
                 Button(action: {
                     dismiss()
-                }){
+                }) {
                     Text("Cancel")
                         .padding([.leading, .bottom, .trailing])
                         .font(.system(size: 22, weight: .semibold))
                         .foregroundStyle(.red)
                 }
-                
+
                 Spacer()
-                
+
                 Button(action: {
-                    // Reset the task state before adding
+                    // Update task with selected values
                     task.startDateTime = starttime
                     task.endDateTime = endtime
-                    if !taskModel.checkTask(task){
-                        print("Task Aggiunto")
+                    task.repetition = repetitionEnabled ? Repetition(interval: customInterval, unit: repetitionUnit) : nil
+                    task.endRepetition = isEndRepetitionOn ? endrep : nil
+
+                    if !taskModel.checkTask(task) {
+                        print("Task Added")
                         taskModel.addTask(task: task, context: contextt)
                         dismiss()
-                    }
-                    else {
-                        // Optionally, you could add error handling here
+                    } else {
                         print("Task not added - potential overlap")
                     }
-                }){
+                }) {
                     Text("Add")
                         .padding([.leading, .bottom, .trailing])
                         .font(.system(size: 22, weight: .semibold))
                 }
                 .disabled(timeModel.timeGreater(startTime: starttime, endTime: endtime, startDate: starttime, endDate: endtime))
             }
-            
+
+            // Main form
             Form {
-               TextField("Nome", text: $task.name)
-               TextField("Luogo", text: $task.location)
-                   
-                DatePicker("Inizio", selection: $starttime, displayedComponents: [.date, .hourAndMinute])
-                
-                DatePicker("Fine", selection: $endtime, displayedComponents: [.date, .hourAndMinute])
-                
-                Menu {
-                    ForEach(taskModel.tags){tag in
-                        Button(action: {
-                            task.tag = tag
-                        }) {
-                            Text(tag.name)
-                            Image(systemName: "tag.fill")
-                                .foregroundStyle(Color(hex: tag.color), .primary)
+                // Section for basic details
+                Section {
+                    TextField("Name", text: $task.name)
+                    TextField("Location", text: $task.location)
+
+                    Picker(selection: $task.tag, label: Text("Tag")) {
+                        Text("Unselected").tag(Optional<Tag>(nil))
+                        ForEach(taskModel.tags) { tag in
+                            HStack {
+                                Image(systemName: "tag.fill")
+                                    .foregroundStyle(Color(hex: tag.color), .primary)
+                                Text(tag.name)
+                            }
+                            .tag(Optional(tag))
                         }
                     }
-                } label: {
-                    HStack {
-                        Text("Tag").foregroundStyle(.black)
-                        Spacer()
-                        Text(task.tag?.name ?? "Unselected").foregroundStyle(.gray)
-                        Image(systemName: "chevron.up.chevron.down").foregroundStyle(.gray)
+                    .tint(.gray)
+                    .pickerStyle(.menu)
+                }
+
+                // Section for date and repetition
+                Section {
+                    DatePicker("Start", selection: $starttime, displayedComponents: [.date, .hourAndMinute])
+                    DatePicker("End", selection: $endtime, displayedComponents: [.date, .hourAndMinute])
+
+                    // Toggle for enabling repetition
+                    Toggle("Repeat Task", isOn: $repetitionEnabled)
+
+                    // If repetition is enabled, show custom interval and unit pickers
+                    if repetitionEnabled {
+                        HStack {
+                            Picker("Interval", selection: $customInterval) {
+                                ForEach(numbers, id: \.self) { number in
+                                    Text("\(number)").tag(number)
+                                }
+                            }
+                            .pickerStyle(WheelPickerStyle())
+                            .frame(width: 100, height: 150)
+
+                            Spacer()
+
+                            Picker("Unit", selection: $repetitionUnit) {
+                                ForEach(RepetitionUnit.allCases, id: \.self) { unit in
+                                    Text(unit.rawValue.capitalized).tag(unit)
+                                }
+                            }
+                            .pickerStyle(WheelPickerStyle())
+                            .frame(width: 150, height: 150)
+                        }
+                        .transition(.move(edge: .top).combined(with: .opacity))
                     }
-                 }
+
+                    // Toggle and picker for ending repetition
+                    Toggle("End Repetition", isOn: $isEndRepetitionOn)
+                        .disabled(!repetitionEnabled)
+                    if isEndRepetitionOn && repetitionEnabled {
+                        DatePicker("", selection: $endrep, displayedComponents: .date)
+                            .datePickerStyle(.wheel)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                }
+
+                // Section for notes
+                Section(header: Text("Note")) {
+                    TextEditor(text: $task.note)
+                        .frame(minHeight: 100)
+                        .foregroundColor(.primary)
+                }
+            }
+            // Animate changes when repetitionEnabled or isEndRepetitionOn changes
+            .animation(.easeInOut(duration: 0.5), value: repetitionEnabled)
+            .animation(.easeInOut(duration: 0.2), value: isEndRepetitionOn)
+            .onChange(of: repetitionEnabled) {
+                if !repetitionEnabled {
+                    isEndRepetitionOn = false
+                }
             }
         }
     }

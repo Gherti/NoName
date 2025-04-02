@@ -14,8 +14,7 @@ struct CatalogueTaskView: View {
         ScrollView {
             VStack {
                 ForEach(tasksForSelectedDate, id: \.id) { task in
-                    
-                    let (startTimeString,endTimeString) = dateModel.dateSize(task.startDateTime,  task.endDateTime)
+                    let (startTimeString,endTimeString) = dateModel.dateSize(task.startDateTime,  task.endDateTime, task)
                     let height = dateModel.dateHeight(start: startTimeString, end: endTimeString)
                     ZStack {
                         Button(action: {
