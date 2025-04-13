@@ -1,7 +1,8 @@
 import SwiftUI
 
+
 struct AnalogClockView: View {
-    
+    @ObservedObject var currentTime = CurrentTime()
     @Binding var zoomSegment: Bool
     @EnvironmentObject var timeModel: TimeModel
     
@@ -18,14 +19,14 @@ struct AnalogClockView: View {
                 }.frame(width: bigCircleFrame, height: bigCircleFrame)
                 
                 ZStack {
-                    Circle().fill(Color(.sRGB, red: 142/255, green: 202/255, blue: 230/255))
+                    Circle().fill(.black)
                     Circle()
                         .stroke(lineWidth: 5)
                     ForEach(0..<60) { tick in
                         VStack {
                             Rectangle()
-                                .fill(.primary)
-                                .opacity(1)
+                                .fill(.white)
+                                .opacity(0.8)
                                 .frame(width: 2, height: tick % 5 == 0 ? 15 : 7)
                             Spacer()
                         }
@@ -36,16 +37,25 @@ struct AnalogClockView: View {
                         VStack {
                             Text("\(tick)")
                                 .font(.title)
+                                .foregroundStyle(.white)
+                                .opacity(0.8)
                                 .rotationEffect(.degrees(-Double(tick)/12 * 360))
                             Spacer()
                         }
                         .rotationEffect(.degrees(Double(tick)/12 * 360))
                     }.padding(20)
+                    
+                    
+                    // hour
+                    
+                    
+                    
                 }.frame(width: littleCircleFrame, height: littleCircleFrame)
             }.position(x: geometry.size.width / 2, y: geometry.size.height / 2)
         }
     }
 }
+
 
 #Preview {
     AnalogClockView(zoomSegment: .constant(false))

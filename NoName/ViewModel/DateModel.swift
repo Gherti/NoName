@@ -126,78 +126,106 @@ class DateModel: ObservableObject {
         let calendar = Calendar.current
         let startMinutes = calendar.component(.hour, from: startDate) * 60 + calendar.component(.minute, from: startDate)
         let endMinutes = calendar.component(.hour, from: endDate) * 60 + calendar.component(.minute, from: endDate)
-
         return Double(endMinutes - startMinutes)
     }
 
     
-    func dateSize(_ start: Date, _ end: Date, _ task: Task) -> (String,String) {
+    func dateSize(_ start: Date, _ end: Date, _ task: Task) -> (String, String) {
         let calendar = Calendar.current
         var dateComponents = DateComponents()
         dateComponents.year = selectedDate?.year
         dateComponents.month = selectedDate?.month
         dateComponents.day = selectedDate?.day
         
-        guard let date = calendar.date(from: dateComponents) else { return ("","") }
-        
-        let startTaskDate = calendar.startOfDay(for: start)
-        let endTaskDate = calendar.startOfDay(for: end)
+        guard let date = calendar.date(from: dateComponents) else { return ("", "") }
         let selectedDay = calendar.startOfDay(for: date)
         
-        var startStr: String = ""
-        var endStr: String = ""
+        var startStr: String = "00:00"
+        var endStr: String = "23:59"
+        // First check if task is active on the selected day
         
-        if startTaskDate < selectedDay && selectedDay < endTaskDate{
-            startStr = "00:00"
-            endStr = "23:59"
+        guard let rep = task.repetition else {
+            if selectedDay == calendar.startOfDay(for: start){
+                startStr = formatTime(from: start)
+            }// Not a repeating task and not within date range
+            if selectedDay == calendar.startOfDay(for: start){
+                endStr = formatTime(from: end)
+            }
+            return (startStr, endStr)
         }
-        else if startTaskDate == selectedDay && selectedDay < endTaskDate{
-            startStr = formatTime(from: start)
-            endStr = "23:59"
-        }
-        else if startTaskDate < selectedDay && selectedDay == endTaskDate{
-            endStr = formatTime(from: end)
-            startStr = "00:00"
-        }
-        else /*if startTaskDate == selectedDay && selectedDay  == endTaskDate*/{
-            
-            startStr = formatTime(from: start)
-            endStr = formatTime(from: end)
-        }
-        /*else {
-            if let rep = task?.repetition{
-                let dayDiffStart = calendar.dateComponents([.day], from: start, to: selectedDay).day ?? 0
-                let dayDiffEnd = calendar.dateComponents([.day], from: end, to: selectedDay).day ?? 0
-                switch rep.unit {
-                case .day:
-                    <#code#>
-                case .week:
-                    if dayDiffStart == dayDiffEnd{
+        
+        
+        switch rep.unit{
+            case .day:
+                if selectedDay>end{
+                    var diffDay = calendar.dateComponents([.day], from: calendar.startOfDay(for: start), to: selectedDay).day ?? 0
+                    if diffDay % rep.interval == 0{
                         startStr = formatTime(from: start)
-                        endStr = formatTime(from: end)
-                    }
-                    else if dayDiffStart % (rep.interval * 7) == 0{
-                        startStr = formatTime(from: start)
-                        endStr = "23:59"
-                    }
-                    else if dayDiffEnd % (rep.interval * 7) == 0{
-                        endStr = formatTime(from: end)
-                        startStr = "00:00"
-                    }
-                    else{
-                        startStr = "00:00"
-                        endStr = "23:59"
                     }
                     
-                case .month:
-                    <#code#>
-                case .year:
-                    <#code#>
+                    diffDay = calendar.dateComponents([.day], from: calendar.startOfDay(for: end), to: selectedDay).day ?? 0
+                    if diffDay % rep.interval == 0{
+                        endStr = formatTime(from: end)
+                    }
+                }else{
+                    if calendar.startOfDay(for: start) == selectedDay{
+                        startStr = formatTime(from: start)
+                    }
+                    if calendar.startOfDay(for: end) == selectedDay{
+                        endStr = formatTime(from: end)
+                    }
                 }
-            }
-        }*/
+            case .week:
+                if selectedDay>end{
+                    var diffDay = calendar.dateComponents([.day], from: calendar.startOfDay(for: start), to: selectedDay).day ?? 0
+                    if diffDay % (rep.interval * 7) == 0{
+                        startStr = formatTime(from: start)
+                    }
+                
+                    diffDay = calendar.dateComponents([.day], from: calendar.startOfDay(for: end), to: selectedDay).day ?? 0
+                    if diffDay % (rep.interval * 7) == 0{
+                        endStr = formatTime(from: end)
+                    }
+                }else{
+                    if calendar.startOfDay(for: start) == selectedDay{
+                        startStr = formatTime(from: start)
+                    }
+                    if calendar.startOfDay(for: end) == selectedDay{
+                        endStr = formatTime(from: end)
+                    }
+                }
+                
+            
+            case .month:
+                    var diffMonth = calendar.dateComponents([.month], from: calendar.startOfDay(for: start), to: selectedDay).month ?? 0
+            
+                    if calendar.component(.day, from: selectedDay) == calendar.component(.day, from: start) && diffMonth % rep.interval == 0{
+                        startStr = selectedDay > calendar.startOfDay(for: end) ? (rep.interval > 1 ? formatTime(from: start) : "00:00") : (calendar.startOfDay(for: start) == selectedDay ? formatTime(from: start) : "00:00")
+                    }
+            
+                    diffMonth = calendar.dateComponents([.month], from: calendar.startOfDay(for: end), to: selectedDay).month ?? 0
+            
+                    if calendar.component(.day, from: selectedDay) == calendar.component(.day, from: end) && diffMonth % rep.interval == 0{
+                        endStr = selectedDay > calendar.startOfDay(for: end) ? (rep.interval > 1 ? formatTime(from: end) : "23:59") : (
+                            rep.interval > 1 ? (calendar.startOfDay(for: end) == selectedDay ? formatTime(from: end) : "23:59") : "23:59")
+                    }
+            
+            case .year:
+                var diffMonth = calendar.dateComponents([.month], from: calendar.startOfDay(for: start), to: selectedDay).month ?? 0
         
-        return  (startStr,endStr)
+                if calendar.component(.day, from: selectedDay) == calendar.component(.day, from: start) && diffMonth % rep.interval*12 == 0{
+                    startStr = selectedDay > calendar.startOfDay(for: end) ? (rep.interval*12 > 12 ? formatTime(from: start) : "00:00") : (calendar.startOfDay(for: start) == selectedDay ? formatTime(from: start) : "00:00")
+                }
+        
+                diffMonth = calendar.dateComponents([.month], from: calendar.startOfDay(for: end), to: selectedDay).month ?? 0
+        
+                if calendar.component(.day, from: selectedDay) == calendar.component(.day, from: end) && diffMonth % rep.interval == 0{
+                    endStr = selectedDay > calendar.startOfDay(for: end) ? (rep.interval*12 > 12 ? formatTime(from: end) : "23:59") : (
+                        rep.interval*12 > 12 ? (calendar.startOfDay(for: end) == selectedDay ? formatTime(from: end) : "23:59") : "23:59")
+                }
+        }
+        
+        return (startStr, endStr)
     }
     
     

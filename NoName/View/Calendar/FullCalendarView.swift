@@ -67,12 +67,10 @@ struct FullCalendarView: View {
                 }
                 .onAppear {
                     // Scorri automaticamente al mese corrente
-                    withAnimation {
-                        scrollViewProxy.scrollTo(currentMonth, anchor: .top)
-                    }
+                    scrollViewProxy.scrollTo(currentMonth, anchor: .top)
                 }
             }
-            Spacer()
+            
         }
     }
 }

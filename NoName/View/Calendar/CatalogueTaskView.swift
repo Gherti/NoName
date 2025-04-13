@@ -14,6 +14,7 @@ struct CatalogueTaskView: View {
         ScrollView {
             VStack {
                 ForEach(tasksForSelectedDate, id: \.id) { task in
+                    
                     let (startTimeString,endTimeString) = dateModel.dateSize(task.startDateTime,  task.endDateTime, task)
                     let height = dateModel.dateHeight(start: startTimeString, end: endTimeString)
                     ZStack {
@@ -25,7 +26,7 @@ struct CatalogueTaskView: View {
                             RoundedRectangle(cornerRadius: 5)
                                 .frame(width: 280, height: height)
                                 .padding()
-                                .foregroundColor(Color.red)
+                                .foregroundColor(Color(hex: task.tag?.color ?? "#808080"))
                                 .overlay(
                                     VStack(alignment: .leading, spacing: 5) {
                                         if height >= 10 {

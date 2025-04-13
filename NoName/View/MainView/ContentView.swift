@@ -32,7 +32,6 @@ struct ContentView: View {
                                             dateModel.viewTaskInfo = false
                                         }
                                     }
-                                
                                 TaskInfoView()
                                     .frame(width: 300, height: 450)
                                     .transition(.move(edge: .bottom))
@@ -47,7 +46,10 @@ struct ContentView: View {
             }
             Spacer(minLength: 3)
             ZStack {
-                Color(.sRGB, red: 255/255, green: 183/255, blue: 3/255).ignoresSafeArea()
+                Color(.black)
+                    .opacity(0.8)
+                    .ignoresSafeArea()
+                    
                 HStack{
                     ForEach(0..<3, id: \.self){number in
                         Button(action: {
@@ -58,25 +60,25 @@ struct ContentView: View {
                             if selectedIndex == number {
                                 if number != 1{
                                     Image(systemName: icons[number]+".fill")
-                                        .font(.system(size: 30))
-                                        .foregroundStyle(.black)
+                                        .font(.system(size: 27))
+                                        .foregroundStyle(.red)
                                 }
                                 else {
                                     Image(systemName: icons[number])
-                                        .font(.system(size: 30))
-                                        .foregroundStyle(.black)
+                                        .font(.system(size: 27))
+                                        .foregroundStyle(.red)
                                 }
                             }
                             else{
                                 Image(systemName: icons[number])
-                                    .font(.system(size: 30))
-                                    .foregroundStyle(.gray)
+                                    .font(.system(size: 27))
+                                    .foregroundStyle(.red)
                             }
                             Spacer()
                         })
                     }
-                }.padding(.top, 5)
-            }.frame(height: 55)
+                }.padding(.top, 15)
+            }.frame(height: 40)
         }
     }
 }

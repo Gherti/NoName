@@ -74,20 +74,40 @@ struct BotttomSheetView: View {
                 Section {
                     TextField("Name", text: $task.name)
                     TextField("Location", text: $task.location)
-
-                    Picker(selection: $task.tag, label: Text("Tag")) {
-                        Text("Unselected").tag(Optional<Tag>(nil))
-                        ForEach(taskModel.tags) { tag in
-                            HStack {
-                                Image(systemName: "tag.fill")
-                                    .foregroundStyle(Color(hex: tag.color), .primary)
-                                Text(tag.name)
+                    HStack{
+                        Text("Tag")
+                        Spacer()
+                        Menu {
+                            Button("Unselected") {
+                                task.tag = nil
                             }
-                            .tag(Optional(tag))
+                            
+                            ForEach(taskModel.tags) { tag in
+                                Button {
+                                    task.tag = tag
+                                } label: {
+                                    HStack {
+                                        Text(tag.name)
+                                        Spacer()
+                                        Image(systemName: "tag.fill")
+                                            .foregroundStyle(Color(hex: tag.color), .primary)
+                                            .font(.caption)
+                                    }
+                                }
+                            }
+                        } label: {
+                            HStack {
+                                if let selectedTag = task.tag {
+                                    Text(selectedTag.name)
+                                } else {
+                                    Text("Unselected")
+                                }
+                                Image(systemName: "chevron.up.chevron.down")
+                                    .font(.caption)
+                            }
+                            .foregroundStyle(.black)
                         }
                     }
-                    .tint(.gray)
-                    .pickerStyle(.menu)
                 }
 
                 // Section for date and repetition

@@ -57,7 +57,7 @@ struct ToDoView: View {
                 }
             }
             .frame(width: bigCircleFrame, height: bigCircleFrame)
-            .overlay(DonutCutout(innerRadius: bigCircleFrame - littlCircleFrame))
+            .overlay(DonutCutout(innerRadius: littlCircleFrame))
             .compositingGroup()
             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
         }
@@ -122,7 +122,7 @@ struct DonutCutout: View {
 
     var body: some View {
         Circle()
-            .frame(width: innerRadius * 2, height: innerRadius * 2)
+            .frame(width: innerRadius, height: innerRadius)
             .blendMode(.destinationOut)
     }
 }
