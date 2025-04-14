@@ -4,6 +4,19 @@ import SwiftUI
 class TimeModel: ObservableObject {
     @Published var showClock: Bool = false
     
+    init() {
+            let currentHour = Calendar.current.component(.hour, from: Date())
+            
+            // Imposta showClock in base all'ora della giornata
+            if currentHour >= 12 || currentHour <= 23 {
+                // Se l'ora è tra 18:00 e 6:00, imposta showClock su true
+                self.showClock = true
+            } else {
+                // Altrimenti, imposta showClock su false
+                self.showClock = false
+            }
+        }
+    
     func toggleClock() {
         showClock.toggle()
     }

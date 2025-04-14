@@ -8,30 +8,33 @@ struct AdminView: View {
     @EnvironmentObject var taskModel: TaskModel
     
     var body: some View {
-        VStack {
-            // Bottone per stampare i dati
-            Button("Stampa tutti i Task") {
-                printTasks()
+        ZStack{
+            Color.black.ignoresSafeArea(.all)
+            VStack {
+                // Bottone per stampare i dati
+                Button("Stampa tutti i Task") {
+                    printTasks()
+                }
+                .padding()
+                
+                // Bottone per eliminare tutti i Task
+                Button("Elimina tutti i Task") {
+                    deleteAllTasks()
+                }
+                .padding()
+                
+                // Bottone per eliminare tutti i Tag
+                Button("Elimina tutti i Tag") {
+                    deleteAllTags()
+                }
+                .padding()
+                
+                // Bottone per eliminare Task e Tag
+                Button("Elimina tutti i Task e i Tag") {
+                    deleteAllTasksAndTags()
+                }
+                .padding()
             }
-            .padding()
-
-            // Bottone per eliminare tutti i Task
-            Button("Elimina tutti i Task") {
-                deleteAllTasks()
-            }
-            .padding()
-
-            // Bottone per eliminare tutti i Tag
-            Button("Elimina tutti i Tag") {
-                deleteAllTags()
-            }
-            .padding()
-
-            // Bottone per eliminare Task e Tag
-            Button("Elimina tutti i Task e i Tag") {
-                deleteAllTasksAndTags()
-            }
-            .padding()
         }
     }
 

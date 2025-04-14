@@ -11,33 +11,45 @@ struct ContentView: View {
     @State var selectedIndex = 0
     @EnvironmentObject var dateModel: DateModel
     
-    let icons = [
-        "clock",
-        "calendar",
-        "person"
-    ]
-    
     var body: some View {
-        VStack{
+        
+        TabView(selection: $selectedIndex) {
+            Group{
+                ClockView()
+                    .tabItem {
+                        Image(systemName: selectedIndex == 0 ? "clock.fill" : "clock")
+                        Text("Clock")
+                    }
+                    .tag(0)
+                
+                CalendarView()
+                    .tabItem {
+                        Image(systemName: "calendar")
+                        Text("Calendar")
+                    }
+                    .tag(1)
+                
+                AdminView()
+                    .tabItem {
+                        Image(systemName: "person.crop.circle")
+                        Text("Profile")
+                    }
+                    .tag(2)
+            }
+            .toolbarBackground(.black, for: .tabBar)
+            .toolbarBackground(.visible, for: .tabBar)
+        }
+        .accentColor(.white)
+        // cambia il colore dell’icona attiva
+        .onChange(of: selectedIndex) {
+            dateModel.viewTaskInfo = false
+        }
+        
+        /*VStack{
             ZStack{
                 switch selectedIndex {
                 case 0:
-                    ClockView().overlay(
-                        Group {
-                            if dateModel.viewTaskInfo {
-                                Color.black.opacity(0.5)
-                                    .ignoresSafeArea()
-                                    .onTapGesture {
-                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                            dateModel.viewTaskInfo = false
-                                        }
-                                    }
-                                TaskInfoView()
-                                    .frame(width: 300, height: 450)
-                                    .transition(.move(edge: .bottom))
-                            }
-                        }
-                    )
+                    ClockView()
                 case 1:
                     CalendarView()
                 default:
@@ -79,7 +91,7 @@ struct ContentView: View {
                     }
                 }.padding(.top, 15)
             }.frame(height: 40)
-        }
+        }*/
     }
 }
 
