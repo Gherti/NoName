@@ -198,30 +198,36 @@ class DateModel: ObservableObject {
             
             case .month:
                     var diffMonth = calendar.dateComponents([.month], from: calendar.startOfDay(for: start), to: selectedDay).month ?? 0
-            
+                    let diffSnE = calendar.dateComponents([.month], from: calendar.startOfDay(for: start), to: calendar.startOfDay(for: end)).month ?? 0
+                    print(diffSnE)
                     if calendar.component(.day, from: selectedDay) == calendar.component(.day, from: start) && diffMonth % rep.interval == 0{
-                        startStr = selectedDay > calendar.startOfDay(for: end) ? (rep.interval > 1 ? formatTime(from: start) : "00:00") : (calendar.startOfDay(for: start) == selectedDay ? formatTime(from: start) : "00:00")
+                        
+                        startStr = selectedDay > calendar.startOfDay(for: end) ? (rep.interval == diffSnE && calendar.component(.day, from: start) == calendar.component(.day, from: end) ? "00:00" : formatTime(from: start)) : (calendar.startOfDay(for: start) == selectedDay ? formatTime(from: start) : "00:00")
                     }
             
                     diffMonth = calendar.dateComponents([.month], from: calendar.startOfDay(for: end), to: selectedDay).month ?? 0
             
                     if calendar.component(.day, from: selectedDay) == calendar.component(.day, from: end) && diffMonth % rep.interval == 0{
-                        endStr = selectedDay > calendar.startOfDay(for: end) ? (rep.interval > 1 ? formatTime(from: end) : "23:59") : (
-                            rep.interval > 1 ? (calendar.startOfDay(for: end) == selectedDay ? formatTime(from: end) : "23:59") : "23:59")
+                        
+                        endStr = selectedDay > calendar.startOfDay(for: end) ? (rep.interval == diffSnE && calendar.component(.day, from: start) == calendar.component(.day, from: end) ? "23:59" : formatTime(from: end)) : (
+                            rep.interval == diffSnE && calendar.component(.day, from: start) == calendar.component(.day, from: end) ? "23:59" : ( calendar.startOfDay(for: end) == selectedDay ? formatTime(from: end) : "23:59"))
                     }
             
             case .year:
                 var diffMonth = calendar.dateComponents([.month], from: calendar.startOfDay(for: start), to: selectedDay).month ?? 0
-        
-                if calendar.component(.day, from: selectedDay) == calendar.component(.day, from: start) && diffMonth % rep.interval*12 == 0{
-                    startStr = selectedDay > calendar.startOfDay(for: end) ? (rep.interval*12 > 12 ? formatTime(from: start) : "00:00") : (calendar.startOfDay(for: start) == selectedDay ? formatTime(from: start) : "00:00")
+                let diffSnE = calendar.dateComponents([.month], from: calendar.startOfDay(for: start), to: calendar.startOfDay(for: end)).month ?? 0
+                if calendar.component(.day, from: selectedDay) == calendar.component(.day, from: start) && diffMonth % (rep.interval*12) == 0{
+                    
+                    startStr = selectedDay > calendar.startOfDay(for: end) ? ((rep.interval*12) == diffSnE && calendar.component(.day, from: start) == calendar.component(.day, from: end) ? "00:00" : formatTime(from: start)) : (calendar.startOfDay(for: start) == selectedDay ? formatTime(from: start) : "00:00")
                 }
         
                 diffMonth = calendar.dateComponents([.month], from: calendar.startOfDay(for: end), to: selectedDay).month ?? 0
         
-                if calendar.component(.day, from: selectedDay) == calendar.component(.day, from: end) && diffMonth % rep.interval == 0{
-                    endStr = selectedDay > calendar.startOfDay(for: end) ? (rep.interval*12 > 12 ? formatTime(from: end) : "23:59") : (
-                        rep.interval*12 > 12 ? (calendar.startOfDay(for: end) == selectedDay ? formatTime(from: end) : "23:59") : "23:59")
+                if calendar.component(.day, from: selectedDay) == calendar.component(.day, from: end) && diffMonth % (rep.interval*12) == 0{
+                    
+                    endStr = selectedDay > calendar.startOfDay(for: end) ? ((rep.interval*12) == diffSnE && calendar.component(.day, from: start) == calendar.component(.day, from: end) ? "23:59" : formatTime(from: end)) : (
+                        rep.interval*12 == diffSnE && calendar.component(.day, from: start) == calendar.component(.day, from: end) ? "23:59" : ( calendar.startOfDay(for: end) == selectedDay ? formatTime(from: end) : "23:59"))
+                    
                 }
         }
         

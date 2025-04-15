@@ -7,19 +7,22 @@ struct ToDoView: View {
     @State private var hasLoadedData: Bool = false
     // Oggetti provenienti da fuori
     @Binding var zoomSegment: Bool
-    
     @EnvironmentObject var timeModel: TimeModel
     @EnvironmentObject var taskModel: TaskModel
     @EnvironmentObject var dateModel: DateModel
     @Environment(\.modelContext) var context
     
+    var tasksForToday: [Task] {
+        taskModel.getTasks(selectedDate: (Calendar.current.component(.year, from: Date()),Calendar.current.component(.month, from: Date()),Calendar.current.component(.day, from: Date())))
+            .sorted { $0.startDateTime < $1.startDateTime }
+    }
     // View
     var body: some View {
         GeometryReader { geometry in
             let bigCircleFrame = (geometry.size.width * 390) / 402
             let littlCircleFrame = (geometry.size.width * 320) / 402
             ZStack {
-                ForEach(taskModel.tasks) { task in
+                ForEach(tasksForToday) { task in
                     let (startAngle, endAngle) = timeModel.timeSize(task)
                     if startAngle != Angle.degrees(0) || endAngle != Angle.degrees(0){
                         ZStack {

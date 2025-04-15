@@ -66,43 +66,114 @@ class TimeModel: ObservableObject {
         let today = calendar.startOfDay(for: Date())
         let start = calendar.startOfDay(for: task.startDateTime)
         let end = calendar.startOfDay(for: task.endDateTime)
-        
-        let startMinutes = calendar.component(.hour, from: task.startDateTime) * 60 +
-                           calendar.component(.minute, from: task.startDateTime)
-        let endMinutes = calendar.component(.hour, from: task.endDateTime) * 60 +
-                         calendar.component(.minute, from: task.endDateTime)
+       
+        let startMinutes = Double(calendar.component(.hour, from: task.startDateTime) * 60 +
+                           calendar.component(.minute, from: task.startDateTime))
+        let endMinutes =  Double(calendar.component(.hour, from: task.endDateTime) * 60 +
+                         calendar.component(.minute, from: task.endDateTime))
         
         var startAng: Double = 0.0
-        var endAng: Double = 0.0
+        var endAng: Double = 1440.0
+        // First check if task is active on the selected day
         
-        if today < start || today > end {
-            return (.degrees(0), .degrees(0)) // Task non in corso oggi
+        guard let rep = task.repetition else {
+            if today < start || today > end {
+                return (.degrees(0), .degrees(0)) // Task non in corso oggi
+            }
+            
+            if today == start {
+                startAng = startMinutes
+            } else {
+                startAng = 0.0 // Se il task è già iniziato nei giorni precedenti
+            }
+            
+            if today == end {
+                endAng = endMinutes
+            } else {
+                endAng = 1440.0 // Se il task finisce in giorni successivi
+            }
+            let showPM = showClock
+            let correctedStart = showPM ? max(startAng, 720) : min(startAng, 720)
+            let correctedEnd = showPM ? max(endAng, 720) : min(endAng, 720)
+            return (.degrees(correctedStart * 0.5 - 90), .degrees(correctedEnd * 0.5 - 90))
         }
         
-        if today == start {
-            startAng = Double(startMinutes)
-        } else {
-            startAng = 0.0 // Se il task è già iniziato nei giorni precedenti
+        
+        switch rep.unit{
+            case .day:
+                if today>end{
+                    var diffDay = calendar.dateComponents([.day], from:  start, to: today).day ?? 0
+                    if diffDay % rep.interval == 0{
+                        startAng = startMinutes
+                    }
+                    
+                    diffDay = calendar.dateComponents([.day], from: end, to: today).day ?? 0
+                    if diffDay % rep.interval == 0{
+                        endAng = endMinutes
+                    }
+                }else{
+                    if start == today{
+                        startAng = startMinutes
+                    }
+                    if end == today{
+                        endAng = endMinutes
+                    }
+                }
+            case .week:
+                if today>end{
+                    var diffDay = calendar.dateComponents([.day], from: start, to: today).day ?? 0
+                    if diffDay % (rep.interval*7) == 0{
+                        startAng = startMinutes
+                    }
+                    diffDay = calendar.dateComponents([.day], from: end, to: today).day ?? 0
+                    
+                    if diffDay % (rep.interval*7) == 0{
+                        endAng = endMinutes
+                    }
+                }else{
+                    if start == today{
+                        startAng = startMinutes
+                    }
+                    if end == today{
+                        endAng = endMinutes
+                    }
+                }
+                
+            
+            case .month:
+                    var diffMonth = calendar.dateComponents([.month], from: start, to: today).month ?? 0
+                    let diffSnE = calendar.dateComponents([.month], from: start, to: end).month ?? 0
+            
+                    if calendar.component(.day, from: today) == calendar.component(.day, from: start) && diffMonth % rep.interval == 0{
+                        startAng = today > end ? (rep.interval == diffSnE && calendar.component(.day, from: start) == calendar.component(.day, from: end) ? 0 : startMinutes) : (start == today ? startMinutes : 0)
+                    }
+            
+                    diffMonth = calendar.dateComponents([.month], from:  end, to: today).month ?? 0
+            
+                    if calendar.component(.day, from: today) == calendar.component(.day, from: end) && diffMonth % rep.interval == 0{
+                        endAng = today > end ? (rep.interval == diffSnE && calendar.component(.day, from: start) == calendar.component(.day, from: end) ? 1440 : endMinutes) : (
+                            rep.interval == diffSnE && calendar.component(.day, from: start) == calendar.component(.day, from: end) ? 1440 : ( end == today ? endMinutes : 1440))
+                    }
+            
+            case .year:
+                    var diffMonth = calendar.dateComponents([.month], from: start, to: today).month ?? 0
+                    let diffSnE = calendar.dateComponents([.month], from: start, to: end).month ?? 0
+                    
+                    if calendar.component(.day, from: today) == calendar.component(.day, from: start) && diffMonth % (rep.interval*12) == 0{
+                        startAng = today > end ? (rep.interval*12 == diffSnE && calendar.component(.day, from: start) == calendar.component(.day, from: end) ? 0 : startMinutes) : (start == today ? startMinutes : 0)
+                    }
+            
+                    diffMonth = calendar.dateComponents([.month], from:  end, to: today).month ?? 0
+                    
+                    if calendar.component(.day, from: today) == calendar.component(.day, from: end) && diffMonth % (rep.interval*12) == 0{
+                        endAng = today > end ? (rep.interval*12 == diffSnE && calendar.component(.day, from: start) == calendar.component(.day, from: end) ? 1440 : endMinutes) : (
+                            rep.interval*12 == diffSnE && calendar.component(.day, from: start) == calendar.component(.day, from: end) ? 1440 : ( end == today ? endMinutes : 1440))
+                    }
         }
         
-        if today == end {
-            endAng = Double(endMinutes)
-        } else {
-            endAng = 1440.0 // Se il task finisce in giorni successivi
-        }
-        
-        // Mostrare solo la metà del cerchio corretta per AM/PM
         let showPM = showClock
         let correctedStart = showPM ? max(startAng, 720) : min(startAng, 720)
         let correctedEnd = showPM ? max(endAng, 720) : min(endAng, 720)
-        
-        if correctedEnd == 0 && correctedStart == 0{
-            return (.degrees(0), .degrees(0))
-        }
-        else if correctedEnd == 720 && correctedStart == 720{
-            return (.degrees(0), .degrees(0))
-        }
-        
         return (.degrees(correctedStart * 0.5 - 90), .degrees(correctedEnd * 0.5 - 90))
     }
 
