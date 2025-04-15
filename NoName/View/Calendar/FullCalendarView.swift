@@ -19,20 +19,24 @@ struct FullCalendarView: View {
                         HStack {
                             Text(dateModel.months[month - 1])
                                 .padding()
-                                .font(.system(size: 30, weight: .light, design: .default))
+                                .font(.system(size: 30, weight: .bold, design: .rounded))
+                                .foregroundStyle(.white.opacity(0.8))
+                                
                             Spacer()
                         }
                         .id(month) // Imposta l'ID per il mese
-
+                        
                         HStack {
                             ForEach(dateModel.daysOfWeek.indices, id: \.self) { index in
                                 Text(dateModel.daysOfWeek[index])
-                                    .font(.system(size: 20, weight: .light, design: .default))
+                                    .foregroundStyle(.white)
+                                    .opacity(0.9)
+                                    .font(.system(size: 20, weight: .medium, design: .rounded))
                                     .padding(8)
                                     .frame(maxWidth: .infinity)
                             }
                         }
-
+                        
                         VStack {
                             let days = dateModel.days(year: currentYear, month: month)
                             LazyVGrid(columns: columns) {
@@ -42,16 +46,21 @@ struct FullCalendarView: View {
                                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                                     } else {
                                         /*if currentDay == day && currentMonth == month{
-                                            Circle()
-                                        }*/
+                                         Circle()
+                                         }*/
                                         Button(action: {
                                             dateModel.selectDate(year: currentYear, month: month, day: day)
                                             isSheetPresented.toggle()
                                         }) {
-                                            Text("\(day)")
-                                                .font(.system(size: 20, weight: .light, design: .default))
-                                                .padding(8)
-                                                .foregroundStyle(.black)
+                                            ZStack{
+                                                if day == currentDay && month == currentMonth{
+                                                    Circle().fill(Color.red).frame(width:35, height:35)
+                                                }
+                                                Text("\(day)")
+                                                    .font(.system(size: 20, weight: .light, design: .rounded))
+                                                    .padding(8)
+                                                    .foregroundStyle(.white)
+                                            }
                                         }.sheet(isPresented: $isSheetPresented){
                                             BottomDayView()
                                         }.onChange(of: isSheetPresented) {
@@ -61,17 +70,17 @@ struct FullCalendarView: View {
                                         }
                                     }
                                 }
+                                
                             }
                         }
                     }
-                }
-                .onAppear {
-                    // Scorri automaticamente al mese corrente
-                    scrollViewProxy.scrollTo(currentMonth, anchor: .top)
+                    .onAppear {
+                        // Scorri automaticamente al mese corrente
+                        scrollViewProxy.scrollTo(currentMonth, anchor: .top)
+                    }
                 }
             }
-            
-        }
+        }.background(Color.black.opacity(0.9))
     }
 }
 

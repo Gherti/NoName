@@ -31,6 +31,7 @@ struct BottomDayView: View {
                     Text("Next")
                         .padding([.leading, .bottom, .trailing])
                         .font(.system(size: 22, weight: .semibold))
+                        
                 }
             }
             
@@ -42,12 +43,7 @@ struct BottomDayView: View {
                     .foregroundColor(.gray)
                     .fontWeight(.bold)
                     .padding()
-            } else {
-                Text("No Task for Today")
-                    .font(.subheadline)
-                    .padding()
-                    .foregroundColor(.gray)
-            }
+            } 
             
             Spacer()
             

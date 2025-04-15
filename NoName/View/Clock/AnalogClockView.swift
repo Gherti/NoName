@@ -44,7 +44,7 @@ struct AnalogClockView: View {
                             Spacer()
                         }
                         .rotationEffect(.degrees(Double(tick)/12 * 360))
-                    }.padding(20)
+                    }.padding()
                     
                     
                     ClockHandsView()

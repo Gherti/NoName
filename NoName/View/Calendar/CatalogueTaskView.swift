@@ -75,6 +75,12 @@ struct CatalogueTaskView: View {
             /*.onAppear {
                 taskModel.fetchTasks(context: context)
             }*/
+            if tasksForSelectedDate.isEmpty{
+                Text("No Task for Today")
+                    .font(.subheadline)
+                    .padding()
+                    .foregroundColor(.gray)
+            }
         }
         .frame(maxWidth: .infinity)
         .scrollIndicators(.hidden)
