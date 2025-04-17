@@ -19,7 +19,7 @@ struct ClockHandsView: View {
             let referenceTime = !forcedToNoon ? 0.0 : currentTime.seconds
             // Hour hand
             Hand(angleMultipler: referenceTime / (60 * 12) / 60, scale: 0.5)
-                .stroke(.white, lineWidth: 4)
+                .stroke(.white, lineWidth: 3)
 
             // Minute hand
             Hand(angleMultipler: referenceTime / 60 / 60, scale: 0.6)

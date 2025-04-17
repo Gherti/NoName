@@ -16,15 +16,23 @@ struct ToDoView: View {
         taskModel.getTasks(selectedDate: (Calendar.current.component(.year, from: Date()),Calendar.current.component(.month, from: Date()),Calendar.current.component(.day, from: Date())))
             .sorted { $0.startDateTime < $1.startDateTime }
     }
+    
+    func isTaskAcrossNoon(task: Task) -> Bool {
+            let startHour = Calendar.current.component(.hour, from: task.startDateTime)
+            let endHour = Calendar.current.component(.hour, from: task.endDateTime)
+            return startHour < 12 && endHour >= 12
+        }
     // View
     var body: some View {
         GeometryReader { geometry in
-            let bigCircleFrame = (geometry.size.width * 390) / 402
+            let bigCircleFrame = (geometry.size.width * 380) / 402
             let littlCircleFrame = (geometry.size.width * 320) / 402
             ZStack {
+                Circle().fill(.white)
                 ForEach(tasksForToday) { task in
                     let (startAngle, endAngle) = timeModel.timeSize(task)
-                    if startAngle != Angle.degrees(0) || endAngle != Angle.degrees(0){
+                    if startAngle != endAngle{
+                        
                         ZStack {
                             // Sezione del task
                             PieSlice(startAngle: startAngle, endAngle: endAngle, bigCircleFrame: bigCircleFrame, littlCircleFrame: littlCircleFrame)
@@ -46,14 +54,19 @@ struct ToDoView: View {
                                 )
                             
                             // Posizionamento dell'emoji
-                            if let tag = task.tag, !tag.emoji.isEmpty {
+                            if let tag = task.tag, !tag.emoji.isEmpty && endAngle.degrees - startAngle.degrees >= 7{
                                 EmojiView(
                                     emoji: tag.emoji,
                                     startAngle: startAngle,
                                     endAngle: endAngle,
-                                    radius: (bigCircleFrame + littlCircleFrame) / 3.9,
+                                    radius: (bigCircleFrame/4 - littlCircleFrame/4) + littlCircleFrame/2,
                                     center: CGPoint(x: bigCircleFrame/2, y: bigCircleFrame/2)
                                 )
+                            }
+                            
+                            if isTaskAcrossNoon(task: task) {
+                                ArrowView()
+                                    .position(x: bigCircleFrame / 2, y: (bigCircleFrame -  littlCircleFrame) / 4)
                             }
                         }
                     }
@@ -71,6 +84,17 @@ struct ToDoView: View {
                 hasLoadedData = true
             }
         }
+    }
+}
+
+struct ArrowView: View {
+    @EnvironmentObject var timeModel: TimeModel
+    var body: some View {
+        Image(systemName: timeModel.showClock ? "arrowtriangle.left.fill" : "arrowtriangle.right.fill") // Icona della freccia
+            .resizable()
+            .frame(width: 15, height: 15)
+            .foregroundColor(.black)
+        
     }
 }
 
@@ -109,13 +133,12 @@ struct PieSlice: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
         let center = CGPoint(x: bigCircleFrame/2, y: bigCircleFrame/2)
-        let radius = (bigCircleFrame / 2) + 2
+        let radius = bigCircleFrame / 2
 
         path.move(to: center)
         path.addArc(center: center, radius: radius,
                     startAngle: startAngle, endAngle: endAngle, clockwise: false)
         path.closeSubpath()
-
         return path
     }
 }

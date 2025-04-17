@@ -8,7 +8,7 @@ class TimeModel: ObservableObject {
             let currentHour = Calendar.current.component(.hour, from: Date())
             
             // Imposta showClock in base all'ora della giornata
-            if currentHour >= 12 || currentHour <= 23 {
+            if currentHour >= 12 && currentHour <= 23 {
                 // Se l'ora è tra 18:00 e 6:00, imposta showClock su true
                 self.showClock = true
             } else {
@@ -95,6 +95,7 @@ class TimeModel: ObservableObject {
             let showPM = showClock
             let correctedStart = showPM ? max(startAng, 720) : min(startAng, 720)
             let correctedEnd = showPM ? max(endAng, 720) : min(endAng, 720)
+            
             return (.degrees(correctedStart * 0.5 - 90), .degrees(correctedEnd * 0.5 - 90))
         }
         

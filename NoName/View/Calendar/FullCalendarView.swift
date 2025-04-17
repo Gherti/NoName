@@ -12,6 +12,7 @@ struct FullCalendarView: View {
     
     let columns = Array(repeating: GridItem(.flexible()), count: 7)
     var body: some View {
+        
         VStack {
             ScrollViewReader { scrollViewProxy in
                 ScrollView {
@@ -80,7 +81,7 @@ struct FullCalendarView: View {
                     }
                 }
             }
-        }.background(Color.black.opacity(0.9))
+        }
     }
 }
 
