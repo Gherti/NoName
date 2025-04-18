@@ -19,11 +19,11 @@ struct ClockHandsView: View {
             let referenceTime = !forcedToNoon ? 0.0 : currentTime.seconds
             // Hour hand
             Hand(angleMultipler: referenceTime / (60 * 12) / 60, scale: 0.5)
-                .stroke(Color("ClockHand"), lineWidth: 3)
+                .stroke(Color("ClockHand"), style: StrokeStyle(lineWidth: 3, lineCap: .round))
 
             // Minute hand
             Hand(angleMultipler: referenceTime / 60 / 60, scale: 0.6)
-                .stroke(Color("ClockHand"), lineWidth: 2)
+                .stroke(Color("ClockHand"), style: StrokeStyle(lineWidth: 2, lineCap: .round))
 
             // Second hand (se vuoi attivarla)
             Hand(angleMultipler: referenceTime.remainder(dividingBy: 60) / 60, scale: 0.7)
@@ -32,10 +32,10 @@ struct ClockHandsView: View {
             // Center point
             Circle()
                 .fill(Color("ClockHand"))
-                .frame(width: 8, height: 8)
+                .frame(width: 5, height: 5)
             Circle()
-                .fill(Color("ClockHand"))
-                .frame(width: 4, height: 4)
+                .fill(Color("ClockHandReversed"))
+                .frame(width: 2, height: 2)
         }
     }
 }

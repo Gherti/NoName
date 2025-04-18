@@ -14,7 +14,7 @@ struct ClockAnimationView: View {
         GeometryReader { geo in
             ZStack {
                 // Sfondo full‑screen
-                Color("Background")
+                Color("LaunchBackground")
                     .ignoresSafeArea()
 
                 // Il “quadrante” animato
@@ -106,10 +106,10 @@ struct AnimatedClockHandsView: View {
     var body: some View {
         ZStack {
             CustomClockHand(angleMultipler: hourAngle / 360, scale: 0.5)
-                .stroke(Color("ClockHand"), lineWidth: 3)
+                .stroke(Color("ClockHand"), style: StrokeStyle(lineWidth: 3, lineCap: .round))
 
             CustomClockHand(angleMultipler: minuteAngle / 360, scale: 0.6)
-                .stroke(Color("ClockHand"), lineWidth: 2)
+                .stroke(Color("ClockHand"), style: StrokeStyle(lineWidth: 2, lineCap: .round))
 
             // de-commenta per avere anche i secondi
             // CustomClockHand(angleMultipler: secondAngle / 360, scale: 0.7)
@@ -117,10 +117,10 @@ struct AnimatedClockHandsView: View {
 
             Circle()
                 .fill(Color("ClockHand"))
-                .frame(width: 8, height: 8)
+                .frame(width: 5, height: 5)
             Circle()
-                .fill(Color("ClockHand"))
-                .frame(width: 4, height: 4)
+                .fill(Color("ClockHandReversed"))
+                .frame(width: 2, height: 2)
         }
     }
 }
