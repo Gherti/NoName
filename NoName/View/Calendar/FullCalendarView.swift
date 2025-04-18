@@ -21,7 +21,7 @@ struct FullCalendarView: View {
                             Text(dateModel.months[month - 1])
                                 .padding()
                                 .font(.system(size: 30, weight: .bold, design: .rounded))
-                                .foregroundStyle(.white.opacity(0.8))
+                                .foregroundStyle(Color("CalendarMWD").opacity(0.8))
                                 
                             Spacer()
                         }
@@ -30,11 +30,11 @@ struct FullCalendarView: View {
                         HStack {
                             ForEach(dateModel.daysOfWeek.indices, id: \.self) { index in
                                 Text(dateModel.daysOfWeek[index])
-                                    .foregroundStyle(.white)
-                                    .opacity(0.9)
+                                    .foregroundStyle(Color("CalendarMWD").opacity(0.9))
                                     .font(.system(size: 20, weight: .medium, design: .rounded))
-                                    .padding(8)
                                     .frame(maxWidth: .infinity)
+                                    .padding(8)
+                                    
                             }
                         }
                         
@@ -59,8 +59,8 @@ struct FullCalendarView: View {
                                                 }
                                                 Text("\(day)")
                                                     .font(.system(size: 20, weight: .light, design: .rounded))
+                                                    .foregroundStyle( day == currentDay && month == currentMonth ? .white : Color("CalendarMWD"))
                                                     .padding(8)
-                                                    .foregroundStyle(.white)
                                             }
                                         }.sheet(isPresented: $isSheetPresented){
                                             BottomDayView()

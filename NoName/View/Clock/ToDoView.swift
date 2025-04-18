@@ -28,7 +28,7 @@ struct ToDoView: View {
             let bigCircleFrame = (geometry.size.width * 380) / 402
             let littlCircleFrame = (geometry.size.width * 320) / 402
             ZStack {
-                Circle().fill(.white)
+                Circle().fill(Color("ToDoBackground"))
                 ForEach(tasksForToday) { task in
                     let (startAngle, endAngle) = timeModel.timeSize(task)
                     if startAngle != endAngle{

@@ -9,7 +9,7 @@ struct AdminView: View {
     
     var body: some View {
         ZStack{
-            Color.black.ignoresSafeArea(.all)
+            Color("Background").ignoresSafeArea(.all)
             VStack {
                 // Bottone per stampare i dati
                 Button("Stampa tutti i Task") {

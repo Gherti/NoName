@@ -31,8 +31,7 @@ struct ClockView: View {
                         }
                     } label: {
                         Image(systemName: "ellipsis.circle")
-                            .foregroundStyle(.white)
-                            .opacity(0.9)
+                            .foregroundStyle(Color("Button"))
                             .font(.system(size: 30))
                             .padding()
                             
@@ -50,8 +49,7 @@ struct ClockView: View {
                         }
                     }, label:{
                         Image(systemName: "plus.circle").font(.system(size: 30))
-                            .foregroundStyle(.white)
-                            .opacity(0.9)
+                            .foregroundStyle(Color("Button"))
                             .padding()
                     }).sheet(isPresented: $isSheetPresented){
                         BotttomSheetView()
@@ -93,7 +91,7 @@ struct ClockView: View {
                     }
                 }
             )
-        }.background(Color.black.opacity(0.9))
+        }.background(Color("Background"))
     }
 }
 

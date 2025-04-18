@@ -14,12 +14,11 @@ struct AnalogClockView: View {
                 ToDoView(zoomSegment: $zoomSegment)
                 
                 ZStack {
-                    Circle().fill(.black)
+                    Circle().fill(Color("ClockBackground"))
                     ForEach(0..<60) { tick in
                         VStack {
                             Rectangle()
-                                .fill(.white)
-                                .opacity(0.8)
+                                .fill(Color("ClockNumNTick"))
                                 .frame(width: 2, height: tick % 5 == 0 ? 15 : 7)
                             Spacer()
                         }
@@ -30,8 +29,7 @@ struct AnalogClockView: View {
                         VStack {
                             Text("\(tick)")
                                 .font(.title2)
-                                .foregroundStyle(.white)
-                                .opacity(0.8)
+                                .foregroundStyle(Color("ClockNumNTick"))
                                 .rotationEffect(.degrees(-Double(tick)/12 * 360))
                             Spacer()
                         }

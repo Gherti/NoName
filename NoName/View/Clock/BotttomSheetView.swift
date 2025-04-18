@@ -105,7 +105,7 @@ struct BotttomSheetView: View {
                                 Image(systemName: "chevron.up.chevron.down")
                                     .font(.caption)
                             }
-                            .foregroundStyle(.white)
+                            .foregroundStyle(.gray)
                         }
                     }
                 }
@@ -167,7 +167,7 @@ struct BotttomSheetView: View {
                     isEndRepetitionOn = false
                 }
             }
-        }.preferredColorScheme(.dark)
+        }
     }
 }
 
